@@ -5,8 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "CorpseMembers.generated.h"
+
 class USkeletalMesh;
-UCLASS()
+UCLASS(Blueprintable)
 class CLEANHISTORY_API ACorpseMembers : public AActor
 {
 	GENERATED_BODY()
@@ -24,11 +25,14 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere)
-	TObjectPtr< USkeletalMesh> ParentSkelethalMesh;
+	TObjectPtr<USkeletalMeshComponent> ParentSkelethalMesh;
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<USkeletalMesh> MemberMesh;
+	TObjectPtr<USkeletalMeshComponent> MemberMesh;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UBoxComponent> CutZone;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class USceneComponent> BleedPoint;
+
+	UFUNCTION()
+		void OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };
