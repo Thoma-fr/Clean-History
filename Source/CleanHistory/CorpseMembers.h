@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "CorpseMembers.generated.h"
 
+class ABloodManager;
 class USkeletalMesh;
 UCLASS(Blueprintable)
 class CLEANHISTORY_API ACorpseMembers : public AActor
@@ -28,10 +29,19 @@ public:
 	TObjectPtr<USkeletalMeshComponent> ParentSkelethalMesh;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMeshComponent> MemberMesh;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UBoxComponent> CutZone;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TObjectPtr<class USceneComponent> BleedPoint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<ABloodManager> bloodManager;
+
+	UPROPERTY()
+	TObjectPtr<ABloodManager> myBloodManager;
+	//UPROPERTY()
+	UPROPERTY(EditAnywhere)
+	FName SocketName;
 
 	UFUNCTION()
 		void OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
