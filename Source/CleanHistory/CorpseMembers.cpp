@@ -36,6 +36,7 @@ void ACorpseMembers::BeginPlay()
 
 	CutZone->OnComponentBeginOverlap.AddDynamic(this, &ACorpseMembers::OverlapBegin);
 	TArray<USceneComponent*> parents;
+
 	GetParentComponent()->GetParentComponents(parents);
 	
 	if(parents.IsEmpty())
@@ -44,8 +45,8 @@ void ACorpseMembers::BeginPlay()
 		return;
 
 	UChildActorComponent* test = Cast<UChildActorComponent>(parents[0]);
-
-	ParentSkelethalMesh = Cast<USkeletalMeshComponent>(test->GetChildActor());
+	ACorpseMembers* test2 = Cast<ACorpseMembers>(test->GetChildActor());
+	ParentSkelethalMesh = test2->MemberMesh;
 
 	if (ParentSkelethalMesh == nullptr)
 	{
@@ -72,8 +73,7 @@ void ACorpseMembers::Tick(float DeltaTime)
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("My socket location is: %s"), *MemberMesh->GetSocketLocation(SocketName).ToString()));
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("My zone Location is: %s"), *CutZone->GetComponentTransform().GetLocation().ToString()));
 	CutZone->SetWorldLocation(MemberMesh->GetSocketLocation(SocketName));
-	
-	
+
 }
 void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -90,5 +90,10 @@ void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 		}
 		//AttachToComponent(BleedPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 		CutZone->OnComponentBeginOverlap.RemoveDynamic(this, &ACorpseMembers::OverlapBegin);
+
+		if (GetParentComponent()->GetChildComponent(0))
+		{
+			
+		}
 	}
 }
