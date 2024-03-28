@@ -27,7 +27,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMeshComponent> ParentSkelethalMesh;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TObjectPtr<USkeletalMeshComponent> MemberMesh;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UBoxComponent> CutZone;
