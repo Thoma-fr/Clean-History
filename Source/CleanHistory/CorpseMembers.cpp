@@ -18,7 +18,7 @@ ACorpseMembers::ACorpseMembers()
 	BleedPoint = CreateDefaultSubobject<USceneComponent>(TEXT("BleedingPoint"));
 	BleedPoint->SetupAttachment(MemberMesh);
 	CutZone = CreateDefaultSubobject<UBoxComponent>(TEXT("CutZone"));
-	
+	CutZone->SetupAttachment(MemberMesh, SocketName);
 
 }
 
@@ -27,24 +27,29 @@ void ACorpseMembers::BeginPlay()
 {
 	Super::BeginPlay();
 	MemberMesh->GetSocketLocation(SocketName);
-	
 	CutZone->AttachToComponent(MemberMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	
-	CutZone->SetupAttachment(MemberMesh, SocketName);
 
-	//printFString("My Variable Vector is: %s", *MyVector.ToString());
-	TArray<USceneComponent*> chibre;
-
-	GetParentComponent()->GetParentComponents(chibre);
-	/*if (sizeof(chibre) == NULL)
-	{
+	
+	if(!GetParentComponent())
 		return;
-	}*/
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("My zone Location is: %s"), *CutZone->GetComponentTransform().GetLocation().ToString()));
-	ParentSkelethalMesh = Cast<USkeletalMeshComponent>(chibre[0]);
+
+	CutZone->OnComponentBeginOverlap.AddDynamic(this, &ACorpseMembers::OverlapBegin);
+	TArray<USceneComponent*> parents;
+	GetParentComponent()->GetParentComponents(parents);
+	
+	if(parents.IsEmpty())
+		return;
+	if(!Cast<UChildActorComponent>(parents[0]))
+		return;
+
+	UChildActorComponent* test = Cast<UChildActorComponent>(parents[0]);
+
+	ParentSkelethalMesh = Cast<USkeletalMeshComponent>(test->GetChildActor());
+
 	if (ParentSkelethalMesh == nullptr)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("The parent value is: %s"), GetParentComponent()->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("The parent value is:"));
 		return;
 	}
 	//ParentSkelethalMesh = Cast<USkeletalMeshComponent>(Getpa);
@@ -54,7 +59,7 @@ void ACorpseMembers::BeginPlay()
 	MemberMesh->SetLeaderPoseComponent(ParentSkelethalMesh);
 	MemberMesh->AttachToComponent(ParentSkelethalMesh,FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	MemberMesh->SetSimulatePhysics(true);
-	CutZone->OnComponentBeginOverlap.AddDynamic(this, &ACorpseMembers::OverlapBegin);
+	
 
 	/*MemberMesh->SetLeaderPoseComponent(nullptr);
 	MemberMesh->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);*/
