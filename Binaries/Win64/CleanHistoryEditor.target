@@ -930,6 +930,10 @@
 			"Type": "DynamicLibrary"
 		},
 		{
+			"Path": "$(EngineDir)/Binaries/Win64/UnrealEditor-MeshConversionEngineTypes.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
 			"Path": "$(EngineDir)/Binaries/Win64/UnrealEditor-MeshDescription.dll",
 			"Type": "DynamicLibrary"
 		},
@@ -2282,6 +2286,14 @@
 			"Type": "RequiredResource"
 		},
 		{
+			"Path": "$(EngineDir)/Plugins/Editor/ModelingToolsEditorMode/Binaries/Win64/UnrealEditor-ModelingToolsEditorMode.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Editor/ModelingToolsEditorMode/Binaries/Win64/UnrealEditor.modules",
+			"Type": "RequiredResource"
+		},
+		{
 			"Path": "$(EngineDir)/Plugins/Editor/ObjectMixer/LightMixer/Binaries/Win64/UnrealEditor-LightMixer.dll",
 			"Type": "DynamicLibrary"
 		},
@@ -2546,6 +2558,22 @@
 			"Type": "RequiredResource"
 		},
 		{
+			"Path": "$(EngineDir)/Plugins/Experimental/GeometryFlow/Binaries/Win64/UnrealEditor-GeometryFlowCore.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Experimental/GeometryFlow/Binaries/Win64/UnrealEditor-GeometryFlowMeshProcessing.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Experimental/GeometryFlow/Binaries/Win64/UnrealEditor-GeometryFlowMeshProcessingEditor.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Experimental/GeometryFlow/Binaries/Win64/UnrealEditor.modules",
+			"Type": "RequiredResource"
+		},
+		{
 			"Path": "$(EngineDir)/Plugins/Experimental/LocalizableMessage/Binaries/Win64/UnrealEditor-LocalizableMessage.dll",
 			"Type": "DynamicLibrary"
 		},
@@ -2555,6 +2583,14 @@
 		},
 		{
 			"Path": "$(EngineDir)/Plugins/Experimental/LocalizableMessage/Binaries/Win64/UnrealEditor.modules",
+			"Type": "RequiredResource"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Experimental/MeshLODToolset/Binaries/Win64/UnrealEditor-MeshLODToolset.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Experimental/MeshLODToolset/Binaries/Win64/UnrealEditor.modules",
 			"Type": "RequiredResource"
 		},
 		{
@@ -2639,6 +2675,14 @@
 		},
 		{
 			"Path": "$(EngineDir)/Plugins/Experimental/SkeletalReduction/Binaries/Win64/UnrealEditor.modules",
+			"Type": "RequiredResource"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Experimental/StaticMeshEditorModeling/Binaries/Win64/UnrealEditor-StaticMeshEditorModeling.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Experimental/StaticMeshEditorModeling/Binaries/Win64/UnrealEditor.modules",
 			"Type": "RequiredResource"
 		},
 		{
@@ -24448,6 +24492,10 @@
 			"Type": "UFS"
 		},
 		{
+			"Path": "$(EngineDir)/Plugins/Editor/ModelingToolsEditorMode/ModelingToolsEditorMode.uplugin",
+			"Type": "UFS"
+		},
+		{
 			"Path": "$(EngineDir)/Plugins/Editor/ObjectMixer/LightMixer/LightMixer.uplugin",
 			"Type": "UFS"
 		},
@@ -24552,7 +24600,15 @@
 			"Type": "UFS"
 		},
 		{
+			"Path": "$(EngineDir)/Plugins/Experimental/GeometryFlow/GeometryFlow.uplugin",
+			"Type": "UFS"
+		},
+		{
 			"Path": "$(EngineDir)/Plugins/Experimental/LocalizableMessage/LocalizableMessage.uplugin",
+			"Type": "UFS"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Experimental/MeshLODToolset/MeshLODToolset.uplugin",
 			"Type": "UFS"
 		},
 		{
@@ -24581,6 +24637,10 @@
 		},
 		{
 			"Path": "$(EngineDir)/Plugins/Experimental/SkeletalReduction/SkeletalReduction.uplugin",
+			"Type": "UFS"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Experimental/StaticMeshEditorModeling/StaticMeshEditorModeling.uplugin",
 			"Type": "UFS"
 		},
 		{
