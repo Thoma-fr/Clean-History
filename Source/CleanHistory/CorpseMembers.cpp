@@ -81,7 +81,15 @@ void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 	if (OtherActor->GetClass()->ImplementsInterface(UIWeapon::StaticClass()))
 	{
 		MemberMesh->SetLeaderPoseComponent(nullptr);
-		MemberMesh->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+		TArray<USceneComponent*> parents;
+		GetParentComponent()->GetParentComponents(parents);
+		//MemberMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		if (parents.IsEmpty())
+			return;
+		if (!Cast<UChildActorComponent>(parents[0]))
+			return;
+		parents[0]->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		//DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
 		if (bloodManager != nullptr)
 		{
