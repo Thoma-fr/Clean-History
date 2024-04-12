@@ -3,13 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Actor/Prop.h"
 #include "GameFramework/Actor.h"
 #include "CorpseMembers.generated.h"
 
 class ABloodManager;
 class USkeletalMesh;
 UCLASS(Blueprintable)
-class CLEANHISTORY_API ACorpseMembers : public AActor
+class CLEANHISTORY_API ACorpseMembers : public AProp
 {
 	GENERATED_BODY()
 	
