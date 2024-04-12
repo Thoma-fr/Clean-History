@@ -56,7 +56,7 @@ void ABrasero::Burn()
 	if (!CanBurn)
 		return;
 
-	AABurnable* BurnableActor = Cast<AABurnable>(ActorInZone);
+	IIBurnable* BurnableActor = Cast<IIBurnable>(ActorInZone);
 	if (BurnableActor)
 	{
 		BurnableActor->ApplyDamageOverTime(DamagePerSecond);

@@ -3,4 +3,11 @@
 
 #include "IBurnable.h"
 
-// Add default functionality here for any IIBurnable functions that are not pure virtual.
+void IIBurnable::ApplyDamageOverTime(uint32 DamagePerSecond)
+{
+    
+}
+
+void IIBurnable::DealDamagePerSecond()
+{
+}

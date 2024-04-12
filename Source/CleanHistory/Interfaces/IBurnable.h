@@ -22,6 +22,7 @@ class CLEANHISTORY_API IIBurnable
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	/*virtual void ApplyDamageOverTime(uint32 DamagePerSecond);
-	virtual void DealDamagePerSecond();*/
+	virtual void ApplyDamageOverTime(uint32 DamagePerSecond);
+
+	virtual void DealDamagePerSecond();
 };
