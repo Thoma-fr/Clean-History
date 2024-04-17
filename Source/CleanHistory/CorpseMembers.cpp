@@ -53,52 +53,52 @@ void ACorpseMembers::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("The parent value is:"));
 		return;
 	}
-	//ParentSkelethalMesh = Cast<USkeletalMeshComponent>(Getpa);
 
-
-	
 	MemberMesh->SetLeaderPoseComponent(ParentSkelethalMesh);
 	MemberMesh->AttachToComponent(ParentSkelethalMesh,FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	MemberMesh->SetSimulatePhysics(true);
 	
-
-	/*MemberMesh->SetLeaderPoseComponent(nullptr);
-	MemberMesh->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);*/
 }
 
 // Called every frame
 void ACorpseMembers::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("My socket location is: %s"), *MemberMesh->GetSocketLocation(SocketName).ToString()));
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("My zone Location is: %s"), *CutZone->GetComponentTransform().GetLocation().ToString()));
+	
 	CutZone->SetWorldLocation(MemberMesh->GetSocketLocation(SocketName));
-
-}
-void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	//IIWeapon* s = Cast<IIWeapon>(OtherActor);
-	if (OtherActor->GetClass()->ImplementsInterface(UIWeapon::StaticClass()))
+	if(hasDetached)
 	{
-		MemberMesh->SetLeaderPoseComponent(nullptr);
-		TArray<USceneComponent*> parents;
-		GetParentComponent()->GetParentComponents(parents);
-		//MemberMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-		if (parents.IsEmpty())
-			return;
-		if (!Cast<UChildActorComponent>(parents[0]))
-			return;
-		parents[0]->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-		//DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-
+		MemberMesh->SetWorldLocation(lastPos);
+		MemberMesh->SetSimulatePhysics(true);
+		hasDetached = false;
 		if (bloodManager != nullptr)
 		{
 			myBloodManager = GetWorld()->SpawnActor<ABloodManager>(bloodManager);
 			myBloodManager->AttachToComponent(BleedPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 		}
-		//AttachToComponent(BleedPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-		CutZone->OnComponentBeginOverlap.RemoveDynamic(this, &ACorpseMembers::OverlapBegin);
+	}
 
+}
+void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor->GetClass()->ImplementsInterface(UIWeapon::StaticClass()))
+	{
+		MemberMesh->SetLeaderPoseComponent(nullptr);
+		TArray<USceneComponent*> parents;
+		GetParentComponent()->GetParentComponents(parents);
+
+		if (parents.IsEmpty())
+			return;
+		if (!Cast<UChildActorComponent>(parents[0]))
+			return;
+
+		lastPos = MemberMesh->GetComponentToWorld().GetLocation();
+		MemberMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		MemberMesh->SetSimulatePhysics(false);
+		hasDetached = true;
+
+
+
+		CutZone->OnComponentBeginOverlap.RemoveDynamic(this, &ACorpseMembers::OverlapBegin);
 		if (GetParentComponent()->GetChildComponent(0))
 		{
 			

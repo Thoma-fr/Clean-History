@@ -38,12 +38,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<ABloodManager> bloodManager;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 MemberLife;
+
+
 	UPROPERTY()
 	TObjectPtr<ABloodManager> myBloodManager;
 	//UPROPERTY()
 	UPROPERTY(EditAnywhere)
 	FName SocketName;
 
+	UPROPERTY()
+	FVector lastPos;
+
+	UPROPERTY()
+	bool hasDetached;
 	/*UFUNCTION()
 		void ChangeParent(USkeletalMesh* parent);*/
 	UFUNCTION()
