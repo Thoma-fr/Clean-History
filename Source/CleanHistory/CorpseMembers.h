@@ -39,7 +39,7 @@ public:
 	TSubclassOf<ABloodManager> bloodManager;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 MemberLife;
+	float MemberLife=100;
 
 
 	UPROPERTY()
@@ -57,4 +57,6 @@ public:
 		void ChangeParent(USkeletalMesh* parent);*/
 	UFUNCTION()
 		void OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 };

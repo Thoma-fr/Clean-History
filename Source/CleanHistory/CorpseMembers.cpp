@@ -82,6 +82,12 @@ void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 {
 	if (OtherActor->GetClass()->ImplementsInterface(UIWeapon::StaticClass()))
 	{
+		//if(OtherActor->GetVelocity()>)
+
+		MemberLife -= OtherComp->GetComponentVelocity().Length() * 0.20f;
+
+		if(MemberLife>0)
+			return;
 		MemberMesh->SetLeaderPoseComponent(nullptr);
 		TArray<USceneComponent*> parents;
 		GetParentComponent()->GetParentComponents(parents);
@@ -104,4 +110,10 @@ void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 			
 		}
 	}
+}
+
+void ACorpseMembers::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+
 }
