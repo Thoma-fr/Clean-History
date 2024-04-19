@@ -16,7 +16,7 @@ ACorpseMembers::ACorpseMembers()
 	MemberMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MemberMesh"));
 	RootComponent = MemberMesh;
 	BleedPoint = CreateDefaultSubobject<USceneComponent>(TEXT("BleedingPoint"));
-	BleedPoint->SetupAttachment(MemberMesh);
+	BleedPoint->SetupAttachment(MemberMesh,SocketName);
 	CutZone = CreateDefaultSubobject<UBoxComponent>(TEXT("CutZone"));
 	CutZone->SetupAttachment(MemberMesh, SocketName);
 
@@ -65,6 +65,7 @@ void ACorpseMembers::Tick(float DeltaTime)
 {
 	
 	CutZone->SetWorldLocation(MemberMesh->GetSocketLocation(SocketName));
+	BleedPoint->SetWorldLocation(MemberMesh->GetSocketLocation(SocketName));
 	if(hasDetached)
 	{
 		MemberMesh->SetWorldLocation(lastPos);
@@ -88,6 +89,7 @@ void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 
 		if(MemberLife>0)
 			return;
+
 		MemberMesh->SetLeaderPoseComponent(nullptr);
 		TArray<USceneComponent*> parents;
 		GetParentComponent()->GetParentComponents(parents);
