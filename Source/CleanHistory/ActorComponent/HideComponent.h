@@ -22,6 +22,9 @@ protected:
 
 public:	
 	// Called every frame
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class USceneComponent* CheckStart;
+
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 		

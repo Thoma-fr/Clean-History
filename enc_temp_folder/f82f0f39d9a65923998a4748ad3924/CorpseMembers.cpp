@@ -93,7 +93,7 @@ void ACorpseMembers::Tick(float DeltaTime)
 	FHitResult Hitminusz;
 
 
-	FVector TraceStart = FVector(CutZone->GetComponentToWorld().GetLocation().X, CutZone->GetComponentToWorld().GetLocation().Y, CutZone->GetComponentToWorld().GetLocation().Z);
+	FVector TraceStart = FVector(CutZone->GetComponentToWorld().GetLocation().X, CutZone->GetComponentToWorld().GetLocation().Y-20.f, CutZone->GetComponentToWorld().GetLocation().Z);
 	FVector TraceEndx = TraceStart+FVector(1, 0, 0) * 100.f;
 
 	FCollisionQueryParams QueryParams;
