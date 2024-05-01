@@ -20,6 +20,7 @@ ABrasero::ABrasero()
 	CollisionBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
 	CollisionBoxComponent->SetupAttachment(RootComponent);
 	CollisionBoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ABrasero::OnBeginOverlap);
+	CollisionBoxComponent->SetNotifyRigidBodyCollision(true);
 }
 
 // Called when the game starts or when spawned
