@@ -11,6 +11,9 @@ UINTERFACE(MinimalAPI,Blueprintable)
 class UIWeapon : public UInterface
 {
 	GENERATED_BODY()
+
+	
+
 };
 
 /**
