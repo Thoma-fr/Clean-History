@@ -40,7 +40,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MemberLife=100;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TEnumAsByte<ECollisionChannel> TraceChannelProperty = ECC_Pawn;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool IsHidden = false;
 
 	UPROPERTY()
 	TObjectPtr<ABloodManager> myBloodManager;

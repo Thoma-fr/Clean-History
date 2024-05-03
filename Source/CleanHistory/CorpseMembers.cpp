@@ -77,7 +77,50 @@ void ACorpseMembers::Tick(float DeltaTime)
 			myBloodManager->AttachToComponent(BleedPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 		}
 	}
+	//LineTrace
+	//bool ishidedX = false;
+	//bool ishidedY = false;
+	//bool ishidedZ = false;
+	//bool ishidedminusX = false;
+	//bool ishidedminusY = false;
+	//bool ishidedminusZ = false;
 
+	FHitResult Hitx;
+	FHitResult Hity;
+	FHitResult Hitz;
+	FHitResult Hitminusx;
+	FHitResult Hitminusy;
+	FHitResult Hitminusz;
+
+
+	FVector TraceStart = FVector(CutZone->GetComponentToWorld().GetLocation().X, CutZone->GetComponentToWorld().GetLocation().Y, CutZone->GetComponentToWorld().GetLocation().Z);
+	FVector TraceEndx = TraceStart+FVector(1, 0, 0) * 100.f;
+
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredComponent(MemberMesh);
+
+	bool ishidedX = GetWorld()->LineTraceSingleByChannel(Hitx, TraceStart + FVector(1, 0, 0) * 30.f, TraceEndx,TraceChannelProperty, QueryParams);
+	bool ishidedY = GetWorld()->LineTraceSingleByChannel(Hity,  TraceStart + FVector(0, 1, 0) * 30.f, TraceEndx, TraceChannelProperty, QueryParams);
+	bool ishidedZ = GetWorld()->LineTraceSingleByChannel(Hitz,  TraceStart + FVector(0, 0, 1) * 30.f, TraceEndx, TraceChannelProperty, QueryParams);
+	bool ishidedminusX = GetWorld()->LineTraceSingleByChannel(Hitminusx, TraceStart + FVector(-1, 0, 0) * 30.f, TraceEndx, TraceChannelProperty, QueryParams);
+	bool ishidedminusY = GetWorld()->LineTraceSingleByChannel(Hitminusy, TraceStart + FVector(0, -1, 0) * 30.f, TraceEndx, TraceChannelProperty, QueryParams);
+	bool ishidedminusZ = GetWorld()->LineTraceSingleByChannel(Hitminusz, TraceStart + FVector(0, 0, -1) * 30.f, TraceEndx, TraceChannelProperty, QueryParams);
+
+
+	
+	DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(1, 0, 0) * 30.f, Hitx.bBlockingHit ? FColor::Red : FColor::Magenta, false, .1f, 0, 2.0f);
+	DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, 1, 0) * 30.f, Hity.bBlockingHit ? FColor::Green : FColor::Magenta, false, .1f, 0, 2.0f);
+	DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, 0, 1) * 30.f, Hitz.bBlockingHit ? FColor::Blue : FColor::Magenta, false, .1f, 0, 2.0f);
+	DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(-1, 0, 0) * 30.f, Hitminusx.bBlockingHit ? FColor::Red : FColor::Magenta, false, .1f, 0, 2.0f);
+	DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, -1, 0) * 30.f, Hitminusy.bBlockingHit ? FColor::Green : FColor::Magenta, false, .1f, 0, 2.0f);
+	DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, 0, -1) * 30.f, Hitminusz.bBlockingHit ? FColor::Blue : FColor::Magenta, false, .1f, 0, 2.0f);
+	int count = ishidedX + ishidedY + ishidedZ + ishidedminusX + ishidedminusY + ishidedminusZ;
+	GEngine->AddOnScreenDebugMessage(-1, .1f, FColor::Red, (("count: ") + std::to_string(count)).c_str());
+	if(count>=5)
+	{
+		IsHidden = true;
+		GEngine->AddOnScreenDebugMessage(-1, .1f, FColor::Green, "hidden");
+	}
 }
 void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
