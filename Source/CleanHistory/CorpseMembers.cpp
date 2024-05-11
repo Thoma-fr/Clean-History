@@ -28,12 +28,14 @@ void ACorpseMembers::BeginPlay()
 	Super::BeginPlay();
 	MemberMesh->GetSocketLocation(SocketName);
 	CutZone->AttachToComponent(MemberMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-	
+	CutZone->SetHiddenInGame(!Debug);
 
 	
-	if(!GetParentComponent())
+	if (!GetParentComponent())
+	{
+		hasDetached = true;
 		return;
-
+	}
 	CutZone->OnComponentBeginOverlap.AddDynamic(this, &ACorpseMembers::OverlapBegin);
 	TArray<USceneComponent*> parents;
 
@@ -107,13 +109,15 @@ void ACorpseMembers::Tick(float DeltaTime)
 	bool ishidedminusZ = GetWorld()->LineTraceSingleByChannel(Hitminusz, TraceStart + FVector(0, 0, -1) * 30.f, TraceEndx, TraceChannelProperty, QueryParams);
 
 
-	
-	DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(1, 0, 0) * 30.f, Hitx.bBlockingHit ? FColor::Red : FColor::Magenta, false, .1f, 0, 2.0f);
-	DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, 1, 0) * 30.f, Hity.bBlockingHit ? FColor::Green : FColor::Magenta, false, .1f, 0, 2.0f);
-	DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, 0, 1) * 30.f, Hitz.bBlockingHit ? FColor::Blue : FColor::Magenta, false, .1f, 0, 2.0f);
-	DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(-1, 0, 0) * 30.f, Hitminusx.bBlockingHit ? FColor::Red : FColor::Magenta, false, .1f, 0, 2.0f);
-	DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, -1, 0) * 30.f, Hitminusy.bBlockingHit ? FColor::Green : FColor::Magenta, false, .1f, 0, 2.0f);
-	DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, 0, -1) * 30.f, Hitminusz.bBlockingHit ? FColor::Blue : FColor::Magenta, false, .1f, 0, 2.0f);
+	if (Debug)
+	{
+		DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(1, 0, 0) * 30.f, Hitx.bBlockingHit ? FColor::Red : FColor::Magenta, false, .1f, 0, 2.0f);
+		DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, 1, 0) * 30.f, Hity.bBlockingHit ? FColor::Green : FColor::Magenta, false, .1f, 0, 2.0f);
+		DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, 0, 1) * 30.f, Hitz.bBlockingHit ? FColor::Blue : FColor::Magenta, false, .1f, 0, 2.0f);
+		DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(-1, 0, 0) * 30.f, Hitminusx.bBlockingHit ? FColor::Red : FColor::Magenta, false, .1f, 0, 2.0f);
+		DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, -1, 0) * 30.f, Hitminusy.bBlockingHit ? FColor::Green : FColor::Magenta, false, .1f, 0, 2.0f);
+		DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, 0, -1) * 30.f, Hitminusz.bBlockingHit ? FColor::Blue : FColor::Magenta, false, .1f, 0, 2.0f);
+	}
 	int count = ishidedX + ishidedY + ishidedZ + ishidedminusX + ishidedminusY + ishidedminusZ;
 	GEngine->AddOnScreenDebugMessage(-1, .1f, FColor::Red, (("count: ") + std::to_string(count)).c_str());
 	if(count>=5)
