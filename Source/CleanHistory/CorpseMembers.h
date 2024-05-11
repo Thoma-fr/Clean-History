@@ -44,7 +44,8 @@ public:
 		TEnumAsByte<ECollisionChannel> TraceChannelProperty = ECC_Pawn;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsHidden = false;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool Debug = false;
 	UPROPERTY()
 	TObjectPtr<ABloodManager> myBloodManager;
 	//UPROPERTY()
