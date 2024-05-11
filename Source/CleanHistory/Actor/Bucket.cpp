@@ -15,7 +15,7 @@ ABucket::ABucket()
 
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	StaticMeshComponent->SetCollisionProfileName(UCollisionProfile::BlockAll_ProfileName);
-	StaticMeshComponent->Mobility = EComponentMobility::Static;
+	StaticMeshComponent->Mobility = EComponentMobility::Movable;
 	StaticMeshComponent->SetGenerateOverlapEvents(false);
 	StaticMeshComponent->bUseDefaultCollision = true;
 	RootComponent = StaticMeshComponent;
