@@ -31,9 +31,11 @@ void ACorpseMembers::BeginPlay()
 	
 
 	
-	if(!GetParentComponent())
+	if (!GetParentComponent())
+	{
+		hasDetached = true;
 		return;
-
+	}
 	CutZone->OnComponentBeginOverlap.AddDynamic(this, &ACorpseMembers::OverlapBegin);
 	TArray<USceneComponent*> parents;
 
