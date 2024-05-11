@@ -4,6 +4,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Math/Vector.h"
+#include "Misc/OutputDeviceNull.h"
 #include "UObject/Class.h"
 
 // Sets default values
@@ -94,15 +95,21 @@ void ABucket::OnBeginOverlapCleaning(UPrimitiveComponent* OverlappedComponent,
 	bool bFromSweep,
 	const FHitResult& SweepResult)
 {
-	if (OtherActor->GetClass()->ImplementsInterface(UIBurnable::StaticClass()))
+	if (OtherActor->GetClass()->ImplementsInterface(UIWashableBroom::StaticClass()))
 	{
-		if (DirtySaturation >= MaxDirtySaturation * (WaterLevel/MaxWaterLevel) || WaterLevel < MinWaterLevelForCleaning || !CanGetDirty)
+		if (DirtySaturation >= MaxDirtySaturation || WaterLevel < MinWaterLevelForCleaning || !CanGetDirty)
 		{
 			return;
 		}
 
 		DirtySaturation += CleaningValue;
-		//balais se salie
+
+		FOutputDeviceNull ar;
+		const FString command = FString::Printf(TEXT("BPCleanBroom"));
+		if (broomBPActor)
+		{
+			broomBPActor->CallFunctionByNameWithArguments(*command, ar, NULL, true);
+		}
 	}
 }
 
@@ -113,7 +120,7 @@ void ABucket::OnBeginOverlapFill(UPrimitiveComponent* OverlappedComponent,
 	bool bFromSweep,
 	const FHitResult& SweepResult)
 {
-	if (OtherActor->GetClass()->ImplementsInterface(UIBurnable::StaticClass()))
+	if (OtherActor->GetClass()->ImplementsInterface(UIWashableBroom::StaticClass()))
 	{
 		if (WaterLevel >= MaxWaterLevel)
 		{

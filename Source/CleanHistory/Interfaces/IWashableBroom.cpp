@@ -5,6 +5,3 @@
 
 // Add default functionality here for any IIWashableBroom functions that are not pure virtual.
 
-void IIWashableBroom::CleanBroom()
-{
-}

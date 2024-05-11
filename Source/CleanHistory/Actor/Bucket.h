@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "../Interfaces/IWashableBroom.h"
 #include "Prop.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -50,6 +51,9 @@ public:
 	void OnWaterLevelChanged(float waterLevel);
 
 private:
+	UPROPERTY(EditAnywhere)
+	AActor* broomBPActor;
+
 	UPROPERTY(EditAnywhere)
 	bool CanBeSpilled;
 

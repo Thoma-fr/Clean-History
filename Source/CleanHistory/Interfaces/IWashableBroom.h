@@ -24,5 +24,5 @@ class CLEANHISTORY_API IIWashableBroom
 public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	virtual void CleanBroom();
+	void CleanBroom();
 };
