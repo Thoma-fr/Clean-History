@@ -48,6 +48,11 @@ SourceArt/**/*.tga
 # Binary Files
 Binaries/*
 Plugins/*/Binaries/*
+!Binaries/Win64
+Binaries/Win64/*
+!Binaries/Win64/CleanHistoryEditor-Win64-DebugGame.target
+!Binaries/Win64/UnrealEditor.modules
+!Binaries/Win64/UnrealEditor-CleanHistory-Win64-DebugGame.dll
 
 # Builds
 Build/*
