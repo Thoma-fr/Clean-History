@@ -61,7 +61,7 @@ void ABucket::Spill(float angleRad)
 		WaterLevel = 0;
 	}
 
-	OnWaterLevelChanged();
+	OnWaterLevelChanged(WaterLevel);
 }
 
 void ABucket::CheckRotation() 
@@ -79,12 +79,12 @@ void ABucket::CheckRotation()
 	}
 }
 
-void ABucket::OnWaterLevelChanged() 
+void ABucket::OnWaterLevelChanged(float waterLevel) 
 {
 	FVector waterScale = CleaningCollisionMeshComponent->GetRelativeScale3D();
-	waterScale.Z = waterMeshScale * (WaterLevel / MaxWaterLevel);
+	waterScale.Z = waterMeshScale * (waterLevel / MaxWaterLevel);
 	CleaningCollisionMeshComponent->SetRelativeScale3D(waterScale);
-	isFull = WaterLevel >= MaxWaterLevel;
+	isFull = WaterLevel <= MaxWaterLevel;
 }
 
 void ABucket::OnBeginOverlapCleaning(UPrimitiveComponent* OverlappedComponent,
@@ -115,9 +115,5 @@ void ABucket::OnBeginOverlapCleaning(UPrimitiveComponent* OverlappedComponent,
 void ABucket::Fill(int32 quantity)
 {
 	WaterLevel += quantity;
-
-	if (WaterLevel > 100)
-		WaterLevel = MaxWaterLevel;
-
-	OnWaterLevelChanged();
+	isFull = WaterLevel <= MaxWaterLevel;
 }

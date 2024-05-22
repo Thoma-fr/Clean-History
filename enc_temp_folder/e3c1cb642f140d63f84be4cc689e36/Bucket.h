@@ -46,7 +46,7 @@ public:
 	void CheckRotation();
 	 
 	UFUNCTION()
-	void OnWaterLevelChanged();
+	void OnWaterLevelChanged(float waterLevel);
 
 private:
 	UPROPERTY(EditAnywhere)
