@@ -3,54 +3,52 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CleanHistory/Interfaces/IBurnable.h"
 #include "GameFramework/Actor.h"
-#include "Brasero.generated.h"
+#include "Fountain.generated.h"
 
 UCLASS()
-class CLEANHISTORY_API ABrasero : public AActor
+class CLEANHISTORY_API AFountain : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ABrasero();
+	AFountain();
 
 protected:
-	// Called when the game starts or when spawned 
+	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void Burn();
-
-	UPROPERTY(EditAnywhere)
-	uint32 DamagePerSecond;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 NbBurnbaleObject = 5;
-
 	UFUNCTION()
-	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
+	void OnBeginOverlapFill(UPrimitiveComponent* OverlappedComponent,
 		AActor* OtherActor,
 		UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex,
 		bool bFromSweep,
 		const FHitResult& SweepResult);
+private: 
+	UPROPERTY()
+	class ABucket* bucket;
 
-private:
+	UPROPERTY()
+	FTimerHandle FillTimer;
+
 	UPROPERTY(EditAnywhere)
-	bool CanBurn =  true;
-
+	float WaterFillLevelPerSecond;
 
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
-	TObjectPtr<class UBoxComponent> CollisionBoxComponent;
-	
+	TObjectPtr<class UStaticMeshComponent> WaterCollision;
+
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<class UStaticMeshComponent> StaticMeshComponent;
 
-	UPROPERTY()
-	AActor* ActorInZone = nullptr;
+	UFUNCTION()
+	void FillOverTime();
+
+	UFUNCTION()
+	void StopFill();
 };
