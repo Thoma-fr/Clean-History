@@ -22,6 +22,18 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+	UPROPERTY()
+	bool isFull;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float DirtySaturation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float MaxDirtySaturation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
+	TObjectPtr<class UStaticMeshComponent> CleaningCollisionMeshComponent;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -34,21 +46,16 @@ public:
 		const FHitResult& SweepResult);
 
 	UFUNCTION()
-	void OnBeginOverlapFill(UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex,
-		bool bFromSweep,
-		const FHitResult& SweepResult);
+	void Fill(int32 quantity);
 
 	UFUNCTION()
 	void Spill(float angleRad);
 
 	UFUNCTION()
 	void CheckRotation();
-
+	 
 	UFUNCTION()
-	void OnWaterLevelChanged(float waterLevel);
+	void OnWaterLevelChanged();
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -70,12 +77,6 @@ private:
 	float MinWaterLevelForCleaning;
 
 	UPROPERTY(EditAnywhere)
-	float DirtySaturation;
-
-	UPROPERTY(EditAnywhere)
-	float MaxDirtySaturation;
-
-	UPROPERTY(EditAnywhere)
 	float CleaningValue;
 
 	UPROPERTY(EditAnywhere)
@@ -83,12 +84,6 @@ private:
 	
 	UPROPERTY(EditAnywhere)
 	float waterMeshScale;
-
-	UPROPERTY(VisibleAnywhere, Category = "Collision")
-	TObjectPtr<class UStaticMeshComponent> CleaningCollisionMeshComponent;
-
-	UPROPERTY(VisibleAnywhere, Category = "Collision")
-	TObjectPtr<class UBoxComponent> FillCollisionBoxComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<class UStaticMeshComponent> StaticMeshComponent;

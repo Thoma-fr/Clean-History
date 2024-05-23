@@ -23,16 +23,14 @@ ABucket::ABucket()
 	CleaningCollisionMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WaterCollisionMesh"));
 	CleaningCollisionMeshComponent->SetupAttachment(RootComponent);
 	CleaningCollisionMeshComponent->OnComponentBeginOverlap.AddDynamic(this, &ABucket::OnBeginOverlapCleaning);
-	
-	FillCollisionBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("FillCollisionBox"));
-	FillCollisionBoxComponent->SetupAttachment(RootComponent);
-	FillCollisionBoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ABucket::OnBeginOverlapFill);
 }
 
 // Called when the game starts or when spawned
 void ABucket::BeginPlay()
 {
 	Super::BeginPlay();
+
+	isFull = WaterLevel >= MaxWaterLevel;
 	
 	waterMeshScale = CleaningCollisionMeshComponent->GetRelativeScale3D().Z;
 }
@@ -63,7 +61,7 @@ void ABucket::Spill(float angleRad)
 		WaterLevel = 0;
 	}
 
-	OnWaterLevelChanged(WaterLevel);
+	OnWaterLevelChanged();
 }
 
 void ABucket::CheckRotation() 
@@ -81,11 +79,12 @@ void ABucket::CheckRotation()
 	}
 }
 
-void ABucket::OnWaterLevelChanged(float waterLevel) 
+void ABucket::OnWaterLevelChanged() 
 {
 	FVector waterScale = CleaningCollisionMeshComponent->GetRelativeScale3D();
-	waterScale.Z = waterMeshScale * (waterLevel / MaxWaterLevel);
+	waterScale.Z = waterMeshScale * (WaterLevel / MaxWaterLevel);
 	CleaningCollisionMeshComponent->SetRelativeScale3D(waterScale);
+	isFull = WaterLevel >= MaxWaterLevel;
 }
 
 void ABucket::OnBeginOverlapCleaning(UPrimitiveComponent* OverlappedComponent,
@@ -113,20 +112,12 @@ void ABucket::OnBeginOverlapCleaning(UPrimitiveComponent* OverlappedComponent,
 	}
 }
 
-void ABucket::OnBeginOverlapFill(UPrimitiveComponent* OverlappedComponent,
-	AActor* OtherActor,
-	UPrimitiveComponent* OtherComp,
-	int32 OtherBodyIndex,
-	bool bFromSweep,
-	const FHitResult& SweepResult)
+void ABucket::Fill(int32 quantity)
 {
-	if (OtherActor->GetClass()->ImplementsInterface(UIWashableBroom::StaticClass()))
-	{
-		if (WaterLevel >= MaxWaterLevel)
-		{
-			return;
-		}
+	WaterLevel += quantity;
 
+	if (WaterLevel > 100)
 		WaterLevel = MaxWaterLevel;
-	}
+
+	OnWaterLevelChanged();
 }
