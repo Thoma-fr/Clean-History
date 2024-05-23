@@ -25,6 +25,15 @@ public:
 	UPROPERTY()
 	bool isFull;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float DirtySaturation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float MaxDirtySaturation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
+	TObjectPtr<class UStaticMeshComponent> CleaningCollisionMeshComponent;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -68,12 +77,6 @@ private:
 	float MinWaterLevelForCleaning;
 
 	UPROPERTY(EditAnywhere)
-	float DirtySaturation;
-
-	UPROPERTY(EditAnywhere)
-	float MaxDirtySaturation;
-
-	UPROPERTY(EditAnywhere)
 	float CleaningValue;
 
 	UPROPERTY(EditAnywhere)
@@ -81,9 +84,6 @@ private:
 	
 	UPROPERTY(EditAnywhere)
 	float waterMeshScale;
-
-	UPROPERTY(VisibleAnywhere, Category = "Collision")
-	TObjectPtr<class UStaticMeshComponent> CleaningCollisionMeshComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<class UStaticMeshComponent> StaticMeshComponent;
