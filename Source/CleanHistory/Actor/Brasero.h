@@ -29,6 +29,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	uint32 DamagePerSecond;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 NbBurnbaleObject = 5;
+
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 		AActor* OtherActor,
@@ -38,12 +41,9 @@ public:
 		const FHitResult& SweepResult);
 
 private:
-
 	UPROPERTY(EditAnywhere)
 	bool CanBurn =  true;
 
-	UPROPERTY(EditAnywhere)
-	uint32 NbBurnbaleObject = 5;
 
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
 	TObjectPtr<class UBoxComponent> CollisionBoxComponent;
