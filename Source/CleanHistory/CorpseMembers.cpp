@@ -59,7 +59,7 @@ void ACorpseMembers::BeginPlay()
 	MemberMesh->SetLeaderPoseComponent(ParentSkelethalMesh);
 	MemberMesh->AttachToComponent(ParentSkelethalMesh,FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	MemberMesh->SetSimulatePhysics(true);
-	
+
 }
 
 // Called every frame
@@ -78,6 +78,20 @@ void ACorpseMembers::Tick(float DeltaTime)
 			myBloodManager = GetWorld()->SpawnActor<ABloodManager>(bloodManager);
 			myBloodManager->AttachToComponent(BleedPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 		}
+		
+	}
+	if(MustEject)
+	{
+		//Eject();
+		TArray<FName> bones;
+		MemberMesh->GetBoneNames(bones);
+		MemberMesh->SetWorldLocation(FVector(100, 100, 100));
+		//MemberMesh->GetBoneName()
+		for (auto Bone : bones)
+		{
+			MemberMesh->AddImpulse(FVector(0, 0, 1) * 2000, Bone, true);
+		}
+		MustEject = false;
 	}
 	//LineTrace
 	//bool ishidedX = false;
@@ -165,4 +179,18 @@ void ACorpseMembers::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* O
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 
+}
+
+void ACorpseMembers::Eject()
+{
+	int32 bonesCount = 0;
+	TArray<FName> bones;
+	MemberMesh->GetBoneNames(bones);
+	MemberMesh->SetWorldLocation(FVector(100, 100, 100));
+	//MemberMesh->GetBoneName()
+	for (auto Bone : bones)
+	{
+		MemberMesh->AddImpulse(FVector(0, 0, 1) * 2000, Bone, true);
+	}
+	
 }
