@@ -152,8 +152,29 @@ void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 			return;
 
 		MemberMesh->SetLeaderPoseComponent(nullptr);
+
+		
 		TArray<USceneComponent*> parents;
+		TArray<USceneComponent*> child;
 		GetParentComponent()->GetParentComponents(parents);
+
+		child=GetParentComponent()->GetAttachChildren();
+
+		if(!child.IsEmpty())
+		{
+
+			for (size_t i = 0; i < child.Num(); i++)
+			{
+				if (Cast<UChildActorComponent>(child[i]))
+				{
+					UChildActorComponent* childActorChild = Cast<UChildActorComponent>(child[0]);
+					ACorpseMembers* childcorpsmembers = Cast<ACorpseMembers>(childActorChild->GetChildActor());
+					childcorpsmembers->MemberMesh->SetLeaderPoseComponent(MemberMesh);
+					//childmesh = Cast<UChildActorComponent>(child[0])
+				}
+			}
+
+		}
 
 		if (parents.IsEmpty())
 			return;
@@ -167,7 +188,7 @@ void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 
 
 
-		CutZone->OnComponentBeginOverlap.RemoveDynamic(this, &ACorpseMembers::OverlapBegin);
+		CutZone->OnComponentBeginOverlap.RemoveDynamic(this, &ACorpseMembers::OverlapBegin); 
 		if (GetParentComponent()->GetChildComponent(0))
 		{
 			
