@@ -66,7 +66,9 @@ void ABucket::Spill(float angleRad)
 	if (!IsSpilling)
 	{
 		IsSpilling = true;
-		UGameplayStatics::PlaySoundAtLocation(this, FillBucketSound, GetActorLocation());
+
+		if(FillBucketSound != nullptr)
+			UGameplayStatics::PlaySoundAtLocation(this, FillBucketSound, GetActorLocation());
 	}
 
 	OnWaterLevelChanged();
@@ -89,6 +91,14 @@ void ABucket::CheckRotation()
 
 void ABucket::OnWaterLevelChanged() 
 {
+	if (CleaningCollisionMeshComponent->IsVisible() && WaterLevel == 0)
+	{
+		CleaningCollisionMeshComponent->SetVisibility(false);
+	}
+	else if(!CleaningCollisionMeshComponent->IsVisible() && WaterLevel > 0)
+	{
+		CleaningCollisionMeshComponent->SetVisibility(true);
+	}
 	FVector waterScale = CleaningCollisionMeshComponent->GetRelativeScale3D();
 	waterScale.Z = waterMeshScale * (WaterLevel / MaxWaterLevel);
 	CleaningCollisionMeshComponent->SetRelativeScale3D(waterScale);
@@ -108,7 +118,9 @@ void ABucket::OnBeginOverlapCleaning(UPrimitiveComponent* OverlappedComponent,
 		{
 			if (DirtySaturation >= MaxDirtySaturation)
 			{
-				UGameplayStatics::PlaySoundAtLocation(this, BroomInDirtyBucketSound, GetActorLocation());
+				if(BroomInDirtyBucketSound != nullptr)
+					UGameplayStatics::PlaySoundAtLocation(this, BroomInDirtyBucketSound, GetActorLocation());
+
 				return;
 			}
 			return;
@@ -120,7 +132,9 @@ void ABucket::OnBeginOverlapCleaning(UPrimitiveComponent* OverlappedComponent,
 		const FString command = FString::Printf(TEXT("BPCleanBroom"));
 		if (broomBPActor)
 		{
-			UGameplayStatics::PlaySoundAtLocation(this, BroomInCleanBucketSound, GetActorLocation());
+			if(BroomInCleanBucketSound != nullptr)
+				UGameplayStatics::PlaySoundAtLocation(this, BroomInCleanBucketSound, GetActorLocation());
+
 			broomBPActor->CallFunctionByNameWithArguments(*command, ar, NULL, true);
 		}
 	}
