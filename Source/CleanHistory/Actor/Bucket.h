@@ -22,6 +22,15 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* BroomInDirtyBucketSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* BroomInCleanBucketSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* FillBucketSound;
+
 	UPROPERTY()
 	bool isFull;
 
@@ -63,6 +72,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	bool CanBeSpilled;
+
+	UPROPERTY()
+	bool IsSpilling;
 
 	UPROPERTY(EditAnywhere)
 	bool CanGetDirty;
