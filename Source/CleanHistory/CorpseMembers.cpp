@@ -8,6 +8,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/SceneComponent.h"
 #include "Interfaces/IWeapon.h"
+#include "Kismet/GameplayStatics.h"
 // Sets default values
 ACorpseMembers::ACorpseMembers()
 {
@@ -59,7 +60,7 @@ void ACorpseMembers::BeginPlay()
 	MemberMesh->SetLeaderPoseComponent(ParentSkelethalMesh);
 	MemberMesh->AttachToComponent(ParentSkelethalMesh,FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	MemberMesh->SetSimulatePhysics(true);
-	
+
 }
 
 // Called every frame
@@ -78,6 +79,20 @@ void ACorpseMembers::Tick(float DeltaTime)
 			myBloodManager = GetWorld()->SpawnActor<ABloodManager>(bloodManager);
 			myBloodManager->AttachToComponent(BleedPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 		}
+		
+	}
+	if(MustEject)
+	{
+		//Eject();
+		TArray<FName> bones;
+		MemberMesh->GetBoneNames(bones);
+		MemberMesh->SetWorldLocation(FVector(100, 100, 100));
+		//MemberMesh->GetBoneName()
+		for (auto Bone : bones)
+		{
+			MemberMesh->AddImpulse(FVector(0, 0, 1) * 2000, Bone, true);
+		}
+		MustEject = false;
 	}
 	//LineTrace
 	//bool ishidedX = false;
@@ -133,13 +148,34 @@ void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 		//if(OtherActor->GetVelocity()>)
 
 		MemberLife -= OtherComp->GetComponentVelocity().Length() * 0.20f;
-
+		UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation());
 		if(MemberLife>0)
 			return;
 
 		MemberMesh->SetLeaderPoseComponent(nullptr);
+
+		
 		TArray<USceneComponent*> parents;
+		TArray<USceneComponent*> child;
 		GetParentComponent()->GetParentComponents(parents);
+
+		child=GetParentComponent()->GetAttachChildren();
+
+		if(!child.IsEmpty())
+		{
+
+			for (size_t i = 0; i < child.Num(); i++)
+			{
+				if (Cast<UChildActorComponent>(child[i]))
+				{
+					UChildActorComponent* childActorChild = Cast<UChildActorComponent>(child[0]);
+					ACorpseMembers* childcorpsmembers = Cast<ACorpseMembers>(childActorChild->GetChildActor());
+					childcorpsmembers->MemberMesh->SetLeaderPoseComponent(MemberMesh);
+					//childmesh = Cast<UChildActorComponent>(child[0])
+				}
+			}
+
+		}
 
 		if (parents.IsEmpty())
 			return;
@@ -150,10 +186,10 @@ void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 		MemberMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 		MemberMesh->SetSimulatePhysics(false);
 		hasDetached = true;
+		UGameplayStatics::PlaySoundAtLocation(this, DismenberSound, GetActorLocation());
+		
 
-
-
-		CutZone->OnComponentBeginOverlap.RemoveDynamic(this, &ACorpseMembers::OverlapBegin);
+		CutZone->OnComponentBeginOverlap.RemoveDynamic(this, &ACorpseMembers::OverlapBegin); 
 		if (GetParentComponent()->GetChildComponent(0))
 		{
 			
@@ -166,3 +202,18 @@ void ACorpseMembers::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* O
 {
 
 }
+
+void ACorpseMembers::Eject()
+{
+	int32 bonesCount = 0;
+	TArray<FName> bones;
+	MemberMesh->GetBoneNames(bones);
+	MemberMesh->SetWorldLocation(FVector(100, 100, 100));
+	//MemberMesh->GetBoneName()
+	for (auto Bone : bones)
+	{
+		MemberMesh->AddImpulse(FVector(0, 0, 1) * 2000, Bone, true);
+	}
+	
+}
+
