@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Bucket.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Math/Vector.h"
@@ -51,6 +52,7 @@ void ABucket::Spill(float angleRad)
 
 	if(waterPorportion < waterSpillProportion || WaterLevel < MinWaterLevelForCleaning)
 	{
+		IsSpilling = false;
 		return;
 	}
 	
@@ -59,6 +61,14 @@ void ABucket::Spill(float angleRad)
 	
 	if (WaterLevel < MinWaterLevelForCleaning) {
 		WaterLevel = 0;
+	}
+
+	if (!IsSpilling)
+	{
+		IsSpilling = true;
+
+		if(FillBucketSound != nullptr)
+			UGameplayStatics::PlaySoundAtLocation(this, FillBucketSound, GetActorLocation());
 	}
 
 	OnWaterLevelChanged();
@@ -81,6 +91,14 @@ void ABucket::CheckRotation()
 
 void ABucket::OnWaterLevelChanged() 
 {
+	if (CleaningCollisionMeshComponent->IsVisible() && WaterLevel == 0)
+	{
+		CleaningCollisionMeshComponent->SetVisibility(false);
+	}
+	else if(!CleaningCollisionMeshComponent->IsVisible() && WaterLevel > 0)
+	{
+		CleaningCollisionMeshComponent->SetVisibility(true);
+	}
 	FVector waterScale = CleaningCollisionMeshComponent->GetRelativeScale3D();
 	waterScale.Z = waterMeshScale * (WaterLevel / MaxWaterLevel);
 	CleaningCollisionMeshComponent->SetRelativeScale3D(waterScale);
@@ -96,8 +114,15 @@ void ABucket::OnBeginOverlapCleaning(UPrimitiveComponent* OverlappedComponent,
 {
 	if (OtherActor->GetClass()->ImplementsInterface(UIWashableBroom::StaticClass()))
 	{
-		if (DirtySaturation >= MaxDirtySaturation || WaterLevel < MinWaterLevelForCleaning || !CanGetDirty)
+		if (WaterLevel < MinWaterLevelForCleaning || !CanGetDirty)
 		{
+			if (DirtySaturation >= MaxDirtySaturation)
+			{
+				if(BroomInDirtyBucketSound != nullptr)
+					UGameplayStatics::PlaySoundAtLocation(this, BroomInDirtyBucketSound, GetActorLocation());
+
+				return;
+			}
 			return;
 		}
 
@@ -107,6 +132,9 @@ void ABucket::OnBeginOverlapCleaning(UPrimitiveComponent* OverlappedComponent,
 		const FString command = FString::Printf(TEXT("BPCleanBroom"));
 		if (broomBPActor)
 		{
+			if(BroomInCleanBucketSound != nullptr)
+				UGameplayStatics::PlaySoundAtLocation(this, BroomInCleanBucketSound, GetActorLocation());
+
 			broomBPActor->CallFunctionByNameWithArguments(*command, ar, NULL, true);
 		}
 	}
