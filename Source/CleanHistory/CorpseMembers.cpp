@@ -8,6 +8,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/SceneComponent.h"
 #include "Interfaces/IWeapon.h"
+#include "Kismet/GameplayStatics.h"
 // Sets default values
 ACorpseMembers::ACorpseMembers()
 {
@@ -147,7 +148,7 @@ void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 		//if(OtherActor->GetVelocity()>)
 
 		MemberLife -= OtherComp->GetComponentVelocity().Length() * 0.20f;
-
+		UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation());
 		if(MemberLife>0)
 			return;
 
@@ -185,8 +186,8 @@ void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 		MemberMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 		MemberMesh->SetSimulatePhysics(false);
 		hasDetached = true;
-
-
+		UGameplayStatics::PlaySoundAtLocation(this, DismenberSound, GetActorLocation());
+		
 
 		CutZone->OnComponentBeginOverlap.RemoveDynamic(this, &ACorpseMembers::OverlapBegin); 
 		if (GetParentComponent()->GetChildComponent(0))
@@ -215,3 +216,4 @@ void ACorpseMembers::Eject()
 	}
 	
 }
+
