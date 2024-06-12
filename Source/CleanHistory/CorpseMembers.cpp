@@ -168,7 +168,7 @@ void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 			{
 				if (Cast<UChildActorComponent>(child[i]))
 				{
-					UChildActorComponent* childActorChild = Cast<UChildActorComponent>(child[0]);
+					UChildActorComponent* childActorChild = Cast<UChildActorComponent>(child[i]);
 					ACorpseMembers* childcorpsmembers = Cast<ACorpseMembers>(childActorChild->GetChildActor());
 					childcorpsmembers->MemberMesh->SetLeaderPoseComponent(MemberMesh);
 					//childmesh = Cast<UChildActorComponent>(child[0])
