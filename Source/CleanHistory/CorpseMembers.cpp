@@ -8,7 +8,6 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/SceneComponent.h"
 #include "Interfaces/IWeapon.h"
-#include "Kismet/GameplayStatics.h"
 // Sets default values
 ACorpseMembers::ACorpseMembers()
 {
@@ -20,7 +19,8 @@ ACorpseMembers::ACorpseMembers()
 	BleedPoint->SetupAttachment(MemberMesh,SocketName);
 	CutZone = CreateDefaultSubobject<UBoxComponent>(TEXT("CutZone"));
 	CutZone->SetupAttachment(MemberMesh, SocketName);
-
+	//BloodParticle = CreateDefaultSubobject<UNiagaraComponent>("BeamParticles");
+	//BeamParticles->SetupAttachment(SceneRoot);
 }
 
 // Called when the game starts or when spawned

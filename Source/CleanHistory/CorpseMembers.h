@@ -65,7 +65,7 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	USoundBase* HitSound;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USoundBase* DismenberSound;
+	USoundBase* DismenberSound;;
 	UPROPERTY(BlueprintReadWrite)
 	bool WantPhysic;
 	/*UFUNCTION()
