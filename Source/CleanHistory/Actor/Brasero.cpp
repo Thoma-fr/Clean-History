@@ -2,6 +2,7 @@
 
 #include "Brasero.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "CleanHistory/CorpseMembers.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -65,6 +66,9 @@ void ABrasero::Burn()
 	IIBurnable* BurnableActor = Cast<IIBurnable>(ActorInZone);
 	if (BurnableActor)
 	{
+		if (BurnActorSound != nullptr)
+			UGameplayStatics::PlaySoundAtLocation(this, BurnActorSound, GetActorLocation());
+
 		BurnableActor->ApplyDamageOverTime(DamagePerSecond);
 	}
 
