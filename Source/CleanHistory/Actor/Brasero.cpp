@@ -50,6 +50,8 @@ void ABrasero::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	if(!CanBurn && EjectAtEnd)
 	{
 		Cast<ACorpseMembers>(OtherActor)->Eject();
+		if (EjectSound != nullptr)
+			UGameplayStatics::PlaySoundAtLocation(this, EjectSound, GetActorLocation());
 	}
 	if (OtherActor->GetClass()->ImplementsInterface(UIBurnable::StaticClass()))
 	{
