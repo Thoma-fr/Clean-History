@@ -26,6 +26,12 @@ public:
 
 	void Burn();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* BurnActorSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* FireExstinctSound;
+
 	UPROPERTY(EditAnywhere)
 	uint32 DamagePerSecond;
 
@@ -44,7 +50,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	bool CanBurn =  true;
 
-
+	UPROPERTY(EditAnywhere)
+	bool EjectAtEnd = false;
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
 	TObjectPtr<class UBoxComponent> CollisionBoxComponent;
 	
