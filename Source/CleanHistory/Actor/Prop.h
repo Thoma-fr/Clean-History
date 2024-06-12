@@ -30,6 +30,9 @@ public:
 
 	virtual void Die();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* BurnOnDestroySound;
+
 	UPROPERTY(EditAnywhere)
 	uint32 Health;
 
