@@ -134,13 +134,25 @@ void ACorpseMembers::Tick(float DeltaTime)
 		DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, 0, -1) * 30.f, Hitminusz.bBlockingHit ? FColor::Blue : FColor::Magenta, false, .1f, 0, 2.0f);
 	}
 	int count = ishidedX + ishidedY + ishidedZ + ishidedminusX + ishidedminusY + ishidedminusZ;
-	GEngine->AddOnScreenDebugMessage(-1, .1f, FColor::Red, (("count: ") + std::to_string(count)).c_str());
+	//GEngine->AddOnScreenDebugMessage(-1, .1f, FColor::Red, (("count: ") + std::to_string(count)).c_str());
 	if(count>=5)
 	{
 		IsHidden = true;
-		GEngine->AddOnScreenDebugMessage(-1, .1f, FColor::Green, "hidden");
+		//GEngine->AddOnScreenDebugMessage(-1, .1f, FColor::Green, "hidden");
 	}
 }
+
+void ACorpseMembers::Die()
+{
+	if (BurnOnDestroySound != nullptr)
+		UGameplayStatics::PlaySoundAtLocation(this, BurnOnDestroySound, GetActorLocation());
+
+	DetacheAll();
+	SetActorEnableCollision(false);
+	SetActorHiddenInGame(true);
+	//SetActorTickEnabled(false);
+}
+
 void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor->GetClass()->ImplementsInterface(UIWeapon::StaticClass()))
@@ -151,49 +163,8 @@ void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 		UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation());
 		if(MemberLife>0)
 			return;
-
-		MemberMesh->SetLeaderPoseComponent(nullptr);
-
+		Detache();
 		
-		TArray<USceneComponent*> parents;
-		TArray<USceneComponent*> child;
-		GetParentComponent()->GetParentComponents(parents);
-
-		child=GetParentComponent()->GetAttachChildren();
-
-		if(!child.IsEmpty())
-		{
-
-			for (size_t i = 0; i < child.Num(); i++)
-			{
-				if (Cast<UChildActorComponent>(child[i]))
-				{
-					UChildActorComponent* childActorChild = Cast<UChildActorComponent>(child[i]);
-					ACorpseMembers* childcorpsmembers = Cast<ACorpseMembers>(childActorChild->GetChildActor());
-					childcorpsmembers->MemberMesh->SetLeaderPoseComponent(MemberMesh);
-					//childmesh = Cast<UChildActorComponent>(child[0])
-				}
-			}
-
-		}
-
-		if (parents.IsEmpty())
-			return;
-		if (!Cast<UChildActorComponent>(parents[0]))
-			return;
-
-		lastPos = MemberMesh->GetComponentToWorld().GetLocation();
-		MemberMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-		MemberMesh->SetSimulatePhysics(false);
-		hasDetached = true;
-		UGameplayStatics::PlaySoundAtLocation(this, DismenberSound, GetActorLocation());
-		
-
-		CutZone->OnComponentBeginOverlap.RemoveDynamic(this, &ACorpseMembers::OverlapBegin); 
-		if (GetParentComponent()->GetChildComponent(0))
-		{
-			
-		}
 	}
 }
 
@@ -215,5 +186,103 @@ void ACorpseMembers::Eject()
 		MemberMesh->AddImpulse(FVector(0, 0, 1) * 2000, Bone, true);
 	}
 	
+}
+
+void ACorpseMembers::Detache()
+{
+	MemberMesh->SetLeaderPoseComponent(nullptr);
+
+
+	TArray<USceneComponent*> parents;
+	TArray<USceneComponent*> child;
+	GetParentComponent()->GetParentComponents(parents);
+
+	child = GetParentComponent()->GetAttachChildren();
+
+	if (!child.IsEmpty())
+	{
+
+		for (size_t i = 0; i < child.Num(); i++)
+		{
+			if (Cast<UChildActorComponent>(child[i]))
+			{
+				UChildActorComponent* childActorChild = Cast<UChildActorComponent>(child[i]);
+				ACorpseMembers* childcorpsmembers = Cast<ACorpseMembers>(childActorChild->GetChildActor());
+				childcorpsmembers->MemberMesh->SetLeaderPoseComponent(MemberMesh);
+				//childmesh = Cast<UChildActorComponent>(child[0])
+			}
+		}
+
+	}
+
+	if (parents.IsEmpty())
+		return;
+	if (!Cast<UChildActorComponent>(parents[0]))
+		return;
+	UChildActorComponent* test = Cast<UChildActorComponent>(parents[0]);
+	//test->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	lastPos = MemberMesh->GetComponentToWorld().GetLocation();
+	MemberMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	MemberMesh->SetSimulatePhysics(false);
+	hasDetached = true;
+	UGameplayStatics::PlaySoundAtLocation(this, DismenberSound, GetActorLocation());
+
+
+	CutZone->OnComponentBeginOverlap.RemoveDynamic(this, &ACorpseMembers::OverlapBegin);
+	if (GetParentComponent()->GetChildComponent(0))
+	{
+
+	}
+}
+
+void ACorpseMembers::DetacheAll()
+{
+	MemberMesh->SetLeaderPoseComponent(nullptr);
+
+
+	TArray<USceneComponent*> parents;
+	TArray<USceneComponent*> child;
+	GetParentComponent()->GetParentComponents(parents);
+
+	child = GetParentComponent()->GetAttachChildren();
+
+	if (!child.IsEmpty())
+	{
+
+		for (size_t i = 0; i < child.Num(); i++)
+		{
+			if (Cast<UChildActorComponent>(child[i]))
+			{
+				UChildActorComponent* childActorChild = Cast<UChildActorComponent>(child[i]);
+				ACorpseMembers* childcorpsmembers = Cast<ACorpseMembers>(childActorChild->GetChildActor());
+				childcorpsmembers->MemberMesh->SetLeaderPoseComponent(MemberMesh);
+				childcorpsmembers->Detache();
+				//childcorpsmembers->MemberMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+				//childcorpsmembers->MemberMesh->SetSimulatePhysics(false);
+				//childcorpsmembers->hasDetached = true;
+
+				//childmesh = Cast<UChildActorComponent>(child[0])
+			}
+		}
+
+	}
+
+	if (parents.IsEmpty())
+		return;
+	if (!Cast<UChildActorComponent>(parents[0]))
+		return;
+
+	lastPos = MemberMesh->GetComponentToWorld().GetLocation();
+	MemberMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	MemberMesh->SetSimulatePhysics(false);
+	hasDetached = true;
+	UGameplayStatics::PlaySoundAtLocation(this, DismenberSound, GetActorLocation());
+
+
+	CutZone->OnComponentBeginOverlap.RemoveDynamic(this, &ACorpseMembers::OverlapBegin);
+	if (GetParentComponent()->GetChildComponent(0))
+	{
+
+	}
 }
 
