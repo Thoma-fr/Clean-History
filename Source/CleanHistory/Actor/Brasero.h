@@ -26,6 +26,13 @@ public:
 
 	void Burn();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* BurnActorSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* FireExstinctSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* EjectSound;
 	UPROPERTY(EditAnywhere)
 	uint32 DamagePerSecond;
 

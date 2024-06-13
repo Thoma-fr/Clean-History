@@ -8,7 +8,6 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/SceneComponent.h"
 #include "Interfaces/IWeapon.h"
-#include "Kismet/GameplayStatics.h"
 // Sets default values
 ACorpseMembers::ACorpseMembers()
 {
@@ -20,7 +19,8 @@ ACorpseMembers::ACorpseMembers()
 	BleedPoint->SetupAttachment(MemberMesh,SocketName);
 	CutZone = CreateDefaultSubobject<UBoxComponent>(TEXT("CutZone"));
 	CutZone->SetupAttachment(MemberMesh, SocketName);
-
+	//BloodParticle = CreateDefaultSubobject<UNiagaraComponent>("BeamParticles");
+	//BeamParticles->SetupAttachment(SceneRoot);
 }
 
 // Called when the game starts or when spawned
@@ -168,7 +168,7 @@ void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 			{
 				if (Cast<UChildActorComponent>(child[i]))
 				{
-					UChildActorComponent* childActorChild = Cast<UChildActorComponent>(child[0]);
+					UChildActorComponent* childActorChild = Cast<UChildActorComponent>(child[i]);
 					ACorpseMembers* childcorpsmembers = Cast<ACorpseMembers>(childActorChild->GetChildActor());
 					childcorpsmembers->MemberMesh->SetLeaderPoseComponent(MemberMesh);
 					//childmesh = Cast<UChildActorComponent>(child[0])

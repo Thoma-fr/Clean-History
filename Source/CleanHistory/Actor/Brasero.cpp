@@ -2,6 +2,7 @@
 
 #include "Brasero.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "CleanHistory/CorpseMembers.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -49,6 +50,8 @@ void ABrasero::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	if(!CanBurn && EjectAtEnd)
 	{
 		Cast<ACorpseMembers>(OtherActor)->Eject();
+		if (EjectSound != nullptr)
+			UGameplayStatics::PlaySoundAtLocation(this, EjectSound, GetActorLocation());
 	}
 	if (OtherActor->GetClass()->ImplementsInterface(UIBurnable::StaticClass()))
 	{
@@ -65,6 +68,9 @@ void ABrasero::Burn()
 	IIBurnable* BurnableActor = Cast<IIBurnable>(ActorInZone);
 	if (BurnableActor)
 	{
+		if (BurnActorSound != nullptr)
+			UGameplayStatics::PlaySoundAtLocation(this, BurnActorSound, GetActorLocation());
+
 		BurnableActor->ApplyDamageOverTime(DamagePerSecond);
 	}
 

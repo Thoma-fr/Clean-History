@@ -3,6 +3,8 @@
 
 #include "Prop.h"
 
+#include "Kismet/GameplayStatics.h"
+
 // Sets default values
 AProp::AProp()
 {
@@ -40,7 +42,6 @@ void AProp::ApplyDamageOverTime(uint32 DamagePerSecond)
 
 void AProp::DealDamagePerSecond()
 {
-
     Health -= Damage;
 
     if (Health <= 0)
@@ -52,6 +53,9 @@ void AProp::DealDamagePerSecond()
 
 void AProp::Die() 
 {
+    if (BurnOnDestroySound != nullptr)
+        UGameplayStatics::PlaySoundAtLocation(this, BurnOnDestroySound, GetActorLocation());
+
     SetActorEnableCollision(false);
     SetActorHiddenInGame(true);
     SetActorTickEnabled(false);
