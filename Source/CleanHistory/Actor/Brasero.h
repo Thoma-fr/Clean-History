@@ -26,8 +26,18 @@ public:
 
 	void Burn();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* BurnActorSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* FireExstinctSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* EjectSound;
 	UPROPERTY(EditAnywhere)
 	uint32 DamagePerSecond;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 NbBurnbaleObject = 5;
 
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
@@ -38,13 +48,11 @@ public:
 		const FHitResult& SweepResult);
 
 private:
-
 	UPROPERTY(EditAnywhere)
 	bool CanBurn =  true;
 
 	UPROPERTY(EditAnywhere)
-	uint32 NbBurnbaleObject = 5;
-
+	bool EjectAtEnd = false;
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
 	TObjectPtr<class UBoxComponent> CollisionBoxComponent;
 	

@@ -1,6 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Brasero.h"
+
+#include "Kismet/GameplayStatics.h"
+#include "CleanHistory/CorpseMembers.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 
@@ -44,6 +47,12 @@ void ABrasero::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	bool bFromSweep,
 	const FHitResult& SweepResult)
 {
+	if(!CanBurn && EjectAtEnd)
+	{
+		Cast<ACorpseMembers>(OtherActor)->Eject();
+		if (EjectSound != nullptr)
+			UGameplayStatics::PlaySoundAtLocation(this, EjectSound, GetActorLocation());
+	}
 	if (OtherActor->GetClass()->ImplementsInterface(UIBurnable::StaticClass()))
 	{
 		ActorInZone = OtherActor;
@@ -59,12 +68,16 @@ void ABrasero::Burn()
 	IIBurnable* BurnableActor = Cast<IIBurnable>(ActorInZone);
 	if (BurnableActor)
 	{
+		if (BurnActorSound != nullptr)
+			UGameplayStatics::PlaySoundAtLocation(this, BurnActorSound, GetActorLocation());
+
 		BurnableActor->ApplyDamageOverTime(DamagePerSecond);
 	}
 
 	if (--NbBurnbaleObject <= 0)
 	{
 		CanBurn = false;
-		CollisionBoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		if(!EjectAtEnd)
+			CollisionBoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 }

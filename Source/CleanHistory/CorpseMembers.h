@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "Actor/Prop.h"
 #include "GameFramework/Actor.h"
+#include "Kismet/GameplayStatics.h"
+
 #include "CorpseMembers.generated.h"
 
 class ABloodManager;
@@ -44,7 +46,10 @@ public:
 		TEnumAsByte<ECollisionChannel> TraceChannelProperty = ECC_Pawn;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsHidden = false;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool MustEject = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool Debug = false;
 	UPROPERTY()
 	TObjectPtr<ABloodManager> myBloodManager;
 	//UPROPERTY()
@@ -56,10 +61,21 @@ public:
 
 	UPROPERTY()
 	bool hasDetached;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	USoundBase* HitSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* DismenberSound;;
+	UPROPERTY(BlueprintReadWrite)
+	bool WantPhysic;
 	/*UFUNCTION()
 		void ChangeParent(USkeletalMesh* parent);*/
 	UFUNCTION()
 		void OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	UFUNCTION(BlueprintCallable)
+		void Eject();
+
+	
 };

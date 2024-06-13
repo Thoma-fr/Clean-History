@@ -19,7 +19,8 @@ ACorpseMembers::ACorpseMembers()
 	BleedPoint->SetupAttachment(MemberMesh,SocketName);
 	CutZone = CreateDefaultSubobject<UBoxComponent>(TEXT("CutZone"));
 	CutZone->SetupAttachment(MemberMesh, SocketName);
-
+	//BloodParticle = CreateDefaultSubobject<UNiagaraComponent>("BeamParticles");
+	//BeamParticles->SetupAttachment(SceneRoot);
 }
 
 // Called when the game starts or when spawned
@@ -28,12 +29,14 @@ void ACorpseMembers::BeginPlay()
 	Super::BeginPlay();
 	MemberMesh->GetSocketLocation(SocketName);
 	CutZone->AttachToComponent(MemberMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-	
+	CutZone->SetHiddenInGame(!Debug);
 
 	
-	if(!GetParentComponent())
+	if (!GetParentComponent())
+	{
+		hasDetached = true;
 		return;
-
+	}
 	CutZone->OnComponentBeginOverlap.AddDynamic(this, &ACorpseMembers::OverlapBegin);
 	TArray<USceneComponent*> parents;
 
@@ -57,7 +60,7 @@ void ACorpseMembers::BeginPlay()
 	MemberMesh->SetLeaderPoseComponent(ParentSkelethalMesh);
 	MemberMesh->AttachToComponent(ParentSkelethalMesh,FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	MemberMesh->SetSimulatePhysics(true);
-	
+
 }
 
 // Called every frame
@@ -76,6 +79,20 @@ void ACorpseMembers::Tick(float DeltaTime)
 			myBloodManager = GetWorld()->SpawnActor<ABloodManager>(bloodManager);
 			myBloodManager->AttachToComponent(BleedPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 		}
+		
+	}
+	if(MustEject)
+	{
+		//Eject();
+		TArray<FName> bones;
+		MemberMesh->GetBoneNames(bones);
+		MemberMesh->SetWorldLocation(FVector(100, 100, 100));
+		//MemberMesh->GetBoneName()
+		for (auto Bone : bones)
+		{
+			MemberMesh->AddImpulse(FVector(0, 0, 1) * 2000, Bone, true);
+		}
+		MustEject = false;
 	}
 	//LineTrace
 	//bool ishidedX = false;
@@ -107,13 +124,15 @@ void ACorpseMembers::Tick(float DeltaTime)
 	bool ishidedminusZ = GetWorld()->LineTraceSingleByChannel(Hitminusz, TraceStart + FVector(0, 0, -1) * 30.f, TraceEndx, TraceChannelProperty, QueryParams);
 
 
-	
-	DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(1, 0, 0) * 30.f, Hitx.bBlockingHit ? FColor::Red : FColor::Magenta, false, .1f, 0, 2.0f);
-	DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, 1, 0) * 30.f, Hity.bBlockingHit ? FColor::Green : FColor::Magenta, false, .1f, 0, 2.0f);
-	DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, 0, 1) * 30.f, Hitz.bBlockingHit ? FColor::Blue : FColor::Magenta, false, .1f, 0, 2.0f);
-	DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(-1, 0, 0) * 30.f, Hitminusx.bBlockingHit ? FColor::Red : FColor::Magenta, false, .1f, 0, 2.0f);
-	DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, -1, 0) * 30.f, Hitminusy.bBlockingHit ? FColor::Green : FColor::Magenta, false, .1f, 0, 2.0f);
-	DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, 0, -1) * 30.f, Hitminusz.bBlockingHit ? FColor::Blue : FColor::Magenta, false, .1f, 0, 2.0f);
+	if (Debug)
+	{
+		DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(1, 0, 0) * 30.f, Hitx.bBlockingHit ? FColor::Red : FColor::Magenta, false, .1f, 0, 2.0f);
+		DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, 1, 0) * 30.f, Hity.bBlockingHit ? FColor::Green : FColor::Magenta, false, .1f, 0, 2.0f);
+		DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, 0, 1) * 30.f, Hitz.bBlockingHit ? FColor::Blue : FColor::Magenta, false, .1f, 0, 2.0f);
+		DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(-1, 0, 0) * 30.f, Hitminusx.bBlockingHit ? FColor::Red : FColor::Magenta, false, .1f, 0, 2.0f);
+		DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, -1, 0) * 30.f, Hitminusy.bBlockingHit ? FColor::Green : FColor::Magenta, false, .1f, 0, 2.0f);
+		DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, 0, -1) * 30.f, Hitminusz.bBlockingHit ? FColor::Blue : FColor::Magenta, false, .1f, 0, 2.0f);
+	}
 	int count = ishidedX + ishidedY + ishidedZ + ishidedminusX + ishidedminusY + ishidedminusZ;
 	GEngine->AddOnScreenDebugMessage(-1, .1f, FColor::Red, (("count: ") + std::to_string(count)).c_str());
 	if(count>=5)
@@ -129,13 +148,34 @@ void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 		//if(OtherActor->GetVelocity()>)
 
 		MemberLife -= OtherComp->GetComponentVelocity().Length() * 0.20f;
-
+		UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation());
 		if(MemberLife>0)
 			return;
 
 		MemberMesh->SetLeaderPoseComponent(nullptr);
+
+		
 		TArray<USceneComponent*> parents;
+		TArray<USceneComponent*> child;
 		GetParentComponent()->GetParentComponents(parents);
+
+		child=GetParentComponent()->GetAttachChildren();
+
+		if(!child.IsEmpty())
+		{
+
+			for (size_t i = 0; i < child.Num(); i++)
+			{
+				if (Cast<UChildActorComponent>(child[i]))
+				{
+					UChildActorComponent* childActorChild = Cast<UChildActorComponent>(child[i]);
+					ACorpseMembers* childcorpsmembers = Cast<ACorpseMembers>(childActorChild->GetChildActor());
+					childcorpsmembers->MemberMesh->SetLeaderPoseComponent(MemberMesh);
+					//childmesh = Cast<UChildActorComponent>(child[0])
+				}
+			}
+
+		}
 
 		if (parents.IsEmpty())
 			return;
@@ -146,10 +186,10 @@ void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 		MemberMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 		MemberMesh->SetSimulatePhysics(false);
 		hasDetached = true;
+		UGameplayStatics::PlaySoundAtLocation(this, DismenberSound, GetActorLocation());
+		
 
-
-
-		CutZone->OnComponentBeginOverlap.RemoveDynamic(this, &ACorpseMembers::OverlapBegin);
+		CutZone->OnComponentBeginOverlap.RemoveDynamic(this, &ACorpseMembers::OverlapBegin); 
 		if (GetParentComponent()->GetChildComponent(0))
 		{
 			
@@ -162,3 +202,18 @@ void ACorpseMembers::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* O
 {
 
 }
+
+void ACorpseMembers::Eject()
+{
+	int32 bonesCount = 0;
+	TArray<FName> bones;
+	MemberMesh->GetBoneNames(bones);
+	MemberMesh->SetWorldLocation(FVector(100, 100, 100));
+	//MemberMesh->GetBoneName()
+	for (auto Bone : bones)
+	{
+		MemberMesh->AddImpulse(FVector(0, 0, 1) * 2000, Bone, true);
+	}
+	
+}
+
