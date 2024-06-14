@@ -47,13 +47,13 @@ void ACorpseMembers::BeginPlay()
 	if(!Cast<UChildActorComponent>(parents[0]))
 		return;
 
-	UChildActorComponent* test = Cast<UChildActorComponent>(parents[0]);
-	ACorpseMembers* test2 = Cast<ACorpseMembers>(test->GetChildActor());
-	ParentSkelethalMesh = test2->MemberMesh;
+	UChildActorComponent* parentChildActor = Cast<UChildActorComponent>(parents[0]);
+	ACorpseMembers* ParentCorpseMember = Cast<ACorpseMembers>(parentChildActor->GetChildActor());
+	ParentSkelethalMesh = ParentCorpseMember->MemberMesh;
 
 	if (ParentSkelethalMesh == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("The parent value is:"));
+		//UE_LOG(LogTemp, Warning, TEXT("The parent value is:"));
 		return;
 	}
 
@@ -73,13 +73,29 @@ void ACorpseMembers::Tick(float DeltaTime)
 	{
 		MemberMesh->SetWorldLocation(lastPos);
 		MemberMesh->SetSimulatePhysics(true);
+		for (size_t i = 0; i < ChildsMesh.Num(); i++)
+		{
+			if (Cast<UChildActorComponent>(ChildsMesh[i]))
+			{
+				/*ChildsMesh[i]->SetWorldLocation(ChildsMeshLastPos[i]);
+				ChildsMesh[i]->SetLeaderPoseComponent(nullptr);
+				ChildsMesh[i]->SetSimulatePhysics(true);*/
+				//UChildActorComponent* childActorChild = Cast<UChildActorComponent>(child[i]);
+				//ACorpseMembers* childcorpsmembers = Cast<ACorpseMembers>(childActorChild->GetChildActor());
+				//ChildsMesh.Add(childcorpsmembers->MemberMesh);
+				//ChildsMeshLastPos.Add(childcorpsmembers->MemberMesh->GetComponentToWorld().GetLocation());
+				//childcorpsmembers->MemberMesh->SetLeaderPoseComponent(MemberMesh);
+				//childmesh = Cast<UChildActorComponent>(child[0])
+			}
+		}
 		hasDetached = false;
 		if (bloodManager != nullptr)
 		{
 			myBloodManager = GetWorld()->SpawnActor<ABloodManager>(bloodManager);
 			myBloodManager->AttachToComponent(BleedPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 		}
-		
+		ChildsMeshLastPos.Empty();
+		ChildsMesh.Empty();
 	}
 	if(MustEject)
 	{
@@ -190,16 +206,34 @@ void ACorpseMembers::Eject()
 
 void ACorpseMembers::Detache()
 {
+
 	MemberMesh->SetLeaderPoseComponent(nullptr);
-
-
 	TArray<USceneComponent*> parents;
 	TArray<USceneComponent*> child;
 	GetParentComponent()->GetParentComponents(parents);
 
 	child = GetParentComponent()->GetAttachChildren();
-
 	if (!child.IsEmpty())
+	{
+
+		for (size_t i = 0; i < child.Num(); i++)
+		{
+			if (Cast<UChildActorComponent>(child[i]))
+			{
+				UChildActorComponent* childActorChild = Cast<UChildActorComponent>(child[i]);
+				ACorpseMembers* childcorpsmembers = Cast<ACorpseMembers>(childActorChild->GetChildActor());
+				childcorpsmembers->Detache();
+				
+				ChildsMesh.Add(childcorpsmembers->MemberMesh);
+				ChildsMesh[i]->SetSimulatePhysics(false);
+				ChildsMeshLastPos.Add(childcorpsmembers->MemberMesh->GetComponentToWorld().GetLocation());
+				//childcorpsmembers->MemberMesh->SetLeaderPoseComponent(MemberMesh);
+				//childmesh = Cast<UChildActorComponent>(child[0])
+			}
+		}
+
+	}
+	/*if (!child.IsEmpty())
 	{
 
 		for (size_t i = 0; i < child.Num(); i++)
@@ -213,16 +247,15 @@ void ACorpseMembers::Detache()
 			}
 		}
 
-	}
-
+	}*/
+	lastPos = MemberMesh->GetComponentToWorld().GetLocation();
 	if (parents.IsEmpty())
 		return;
 	if (!Cast<UChildActorComponent>(parents[0]))
 		return;
 	UChildActorComponent* test = Cast<UChildActorComponent>(parents[0]);
 	//test->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-	lastPos = MemberMesh->GetComponentToWorld().GetLocation();
-	MemberMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	GetParentComponent()->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 	MemberMesh->SetSimulatePhysics(false);
 	hasDetached = true;
 	UGameplayStatics::PlaySoundAtLocation(this, DismenberSound, GetActorLocation());

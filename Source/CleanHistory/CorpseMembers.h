@@ -80,6 +80,11 @@ public:
 		void Eject();
 
 private:
+	UPROPERTY()
+	TArray<TObjectPtr<USkeletalMeshComponent>> ChildsMesh;
+
+	UPROPERTY()
+	TArray<FVector> ChildsMeshLastPos;
 	UFUNCTION(BlueprintCallable)
 	void Detache();
 	UFUNCTION(BlueprintCallable)
