@@ -28,6 +28,7 @@ public:
 
 	virtual void DealDamagePerSecond() override;
 
+
 	virtual void Die();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
