@@ -110,6 +110,8 @@ void ACorpseMembers::Tick(float DeltaTime)
 		}
 		MustEject = false;
 	}
+	if(Burned)
+		return;
 	//LineTrace
 	//bool ishidedX = false;
 	//bool ishidedY = false;
@@ -169,10 +171,12 @@ void ACorpseMembers::Die()
 	if (BurnOnDestroySound != nullptr)
 		UGameplayStatics::PlaySoundAtLocation(this, BurnOnDestroySound, GetActorLocation());
 
-	DetacheAll();
-	SetActorEnableCollision(false);
+	Detache();
+	//SetActorEnableCollision(false);
 	SetActorHiddenInGame(true);
 	//SetActorTickEnabled(false);
+	Burned= true;
+	IsHidden=true;
 }
 
 void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
