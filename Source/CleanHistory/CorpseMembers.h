@@ -85,6 +85,8 @@ private:
 
 	UPROPERTY()
 	TArray<FVector> ChildsMeshLastPos;
+	UPROPERTY()
+	bool Burned;
 	UFUNCTION(BlueprintCallable)
 	void Detache();
 	UFUNCTION(BlueprintCallable)
