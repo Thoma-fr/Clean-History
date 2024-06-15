@@ -131,7 +131,7 @@ void ACorpseMembers::Tick(float DeltaTime)
 
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredComponent(MemberMesh);
-
+	QueryParams.AddIgnoredComponent(CutZone);
 	bool ishidedX = GetWorld()->LineTraceSingleByChannel(Hitx, TraceStart + FVector(1, 0, 0) * 30.f, TraceEndx,TraceChannelProperty, QueryParams);
 	bool ishidedY = GetWorld()->LineTraceSingleByChannel(Hity,  TraceStart + FVector(0, 1, 0) * 30.f, TraceEndx, TraceChannelProperty, QueryParams);
 	bool ishidedZ = GetWorld()->LineTraceSingleByChannel(Hitz,  TraceStart + FVector(0, 0, 1) * 30.f, TraceEndx, TraceChannelProperty, QueryParams);
@@ -150,11 +150,17 @@ void ACorpseMembers::Tick(float DeltaTime)
 		DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, 0, -1) * 30.f, Hitminusz.bBlockingHit ? FColor::Blue : FColor::Magenta, false, .1f, 0, 2.0f);
 	}
 	int count = ishidedX + ishidedY + ishidedZ + ishidedminusX + ishidedminusY + ishidedminusZ;
-	//GEngine->AddOnScreenDebugMessage(-1, .1f, FColor::Red, (("count: ") + std::to_string(count)).c_str());
+	if(ishidedX)
+		GEngine->AddOnScreenDebugMessage(-1, .1f, FColor::Red, (Hitx.GetActor()->GetFName()).ToString());
+	GEngine->AddOnScreenDebugMessage(-1, .1f, FColor::Red, (("count: ") + std::to_string(count)).c_str());
 	if(count>=5)
 	{
 		IsHidden = true;
 		//GEngine->AddOnScreenDebugMessage(-1, .1f, FColor::Green, "hidden");
+	}
+	else
+	{
+		IsHidden = false;
 	}
 }
 
