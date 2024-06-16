@@ -35,6 +35,7 @@ void ACorpseMembers::BeginPlay()
 	if (!GetParentComponent())
 	{
 		hasDetached = true;
+		CountAsCorpse = true;
 		return;
 	}
 	CutZone->OnComponentBeginOverlap.AddDynamic(this, &ACorpseMembers::OverlapBegin);
@@ -44,9 +45,11 @@ void ACorpseMembers::BeginPlay()
 	
 	if(parents.IsEmpty())
 		return;
-	if(!Cast<UChildActorComponent>(parents[0]))
+	if (!Cast<UChildActorComponent>(parents[0]))
+	{
+		CountAsCorpse = true;
 		return;
-
+	}
 	UChildActorComponent* parentChildActor = Cast<UChildActorComponent>(parents[0]);
 	ACorpseMembers* ParentCorpseMember = Cast<ACorpseMembers>(parentChildActor->GetChildActor());
 	ParentSkelethalMesh = ParentCorpseMember->MemberMesh;
@@ -71,6 +74,7 @@ void ACorpseMembers::Tick(float DeltaTime)
 	BleedPoint->SetWorldLocation(MemberMesh->GetSocketLocation(SocketName));
 	if(hasDetached)
 	{
+		CountAsCorpse = true;
 		MemberMesh->SetWorldLocation(lastPos);
 		MemberMesh->SetSimulatePhysics(true);
 		for (size_t i = 0; i < ChildsMesh.Num(); i++)
@@ -119,7 +123,8 @@ void ACorpseMembers::Tick(float DeltaTime)
 	//bool ishidedminusX = false;
 	//bool ishidedminusY = false;
 	//bool ishidedminusZ = false;
-
+	if(!CountAsCorpse)
+		return;
 	FHitResult Hitx;
 	FHitResult Hity;
 	FHitResult Hitz;
@@ -134,6 +139,7 @@ void ACorpseMembers::Tick(float DeltaTime)
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredComponent(MemberMesh);
 	QueryParams.AddIgnoredComponent(CutZone);
+	QueryParams.AddIgnoredComponent(ParentSkelethalMesh);
 	bool ishidedX = GetWorld()->LineTraceSingleByChannel(Hitx, TraceStart + FVector(1, 0, 0) * 30.f, TraceEndx,TraceChannelProperty, QueryParams);
 	bool ishidedY = GetWorld()->LineTraceSingleByChannel(Hity,  TraceStart + FVector(0, 1, 0) * 30.f, TraceEndx, TraceChannelProperty, QueryParams);
 	bool ishidedZ = GetWorld()->LineTraceSingleByChannel(Hitz,  TraceStart + FVector(0, 0, 1) * 30.f, TraceEndx, TraceChannelProperty, QueryParams);
@@ -155,7 +161,7 @@ void ACorpseMembers::Tick(float DeltaTime)
 	if(ishidedX)
 		GEngine->AddOnScreenDebugMessage(-1, .1f, FColor::Red, (Hitx.GetActor()->GetFName()).ToString());
 	GEngine->AddOnScreenDebugMessage(-1, .1f, FColor::Red, (("count: ") + std::to_string(count)).c_str());
-	if(count>=5)
+	if(count>=6)
 	{
 		IsHidden = true;
 		//GEngine->AddOnScreenDebugMessage(-1, .1f, FColor::Green, "hidden");

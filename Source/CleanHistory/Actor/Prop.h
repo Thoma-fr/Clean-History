@@ -40,6 +40,9 @@ public:
 	UPROPERTY()
 	uint32 Damage;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	bool IsKey;
+
 	UPROPERTY()
 	FTimerHandle DamageTimer;
 };
