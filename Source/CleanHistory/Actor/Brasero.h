@@ -6,10 +6,11 @@
 #include "CleanHistory/Interfaces/IBurnable.h"
 #include "GameFramework/Actor.h"
 #include "Brasero.generated.h"
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnKeyItemBurn, FName, ItemName);
 UCLASS()
 class CLEANHISTORY_API ABrasero : public AActor
 {
+
 	GENERATED_BODY()
 	
 public:	
@@ -38,6 +39,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 NbBurnbaleObject = 5;
+	UPROPERTY(BlueprintAssignable)
+	FOnKeyItemBurn OnKeyItemBurn;
 
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
