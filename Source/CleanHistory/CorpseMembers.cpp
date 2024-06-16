@@ -3,6 +3,7 @@
 
 #include "CorpseMembers.h"
 
+#include "AsyncDetailViewDiff.h"
 #include "Actor/BloodManager.h"
 #include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -222,7 +223,8 @@ void ACorpseMembers::Eject()
 
 void ACorpseMembers::Detache()
 {
-
+	if(!GetParentComponent())
+		return;
 	MemberMesh->SetLeaderPoseComponent(nullptr);
 	TArray<USceneComponent*> parents;
 	TArray<USceneComponent*> child;

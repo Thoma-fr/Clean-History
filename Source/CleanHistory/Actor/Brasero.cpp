@@ -72,6 +72,14 @@ void ABrasero::Burn()
 			UGameplayStatics::PlaySoundAtLocation(this, BurnActorSound, GetActorLocation());
 
 		BurnableActor->ApplyDamageOverTime(DamagePerSecond);
+		if(Cast<AProp>(ActorInZone))
+		{
+			if(Cast<AProp>(ActorInZone)->IsKey)
+			{
+				OnKeyItemBurn.Broadcast(ActorInZone->GetFName());
+			}
+		
+		}
 	}
 
 	if (--NbBurnbaleObject <= 0)
