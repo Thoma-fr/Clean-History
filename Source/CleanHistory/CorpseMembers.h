@@ -48,6 +48,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsHidden = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool CountAsCorpse = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool MustEject = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool Debug = false;

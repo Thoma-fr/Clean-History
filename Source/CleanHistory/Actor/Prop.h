@@ -35,10 +35,13 @@ public:
 	USoundBase* BurnOnDestroySound;
 
 	UPROPERTY(EditAnywhere)
-	uint32 Health;
+	uint32 Health = 3;
 
 	UPROPERTY()
 	uint32 Damage;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	bool IsKey;
 
 	UPROPERTY()
 	FTimerHandle DamageTimer;
