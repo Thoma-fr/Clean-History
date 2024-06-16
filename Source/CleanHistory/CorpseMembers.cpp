@@ -158,9 +158,9 @@ void ACorpseMembers::Tick(float DeltaTime)
 		DrawDebugLine(GetWorld(), TraceStart, TraceStart + FVector(0, 0, -1) * 30.f, Hitminusz.bBlockingHit ? FColor::Blue : FColor::Magenta, false, .1f, 0, 2.0f);
 	}
 	int count = ishidedX + ishidedY + ishidedZ + ishidedminusX + ishidedminusY + ishidedminusZ;
-	if(ishidedX)
+	/*if(ishidedX)
 		GEngine->AddOnScreenDebugMessage(-1, .1f, FColor::Red, (Hitx.GetActor()->GetFName()).ToString());
-	GEngine->AddOnScreenDebugMessage(-1, .1f, FColor::Red, (("count: ") + std::to_string(count)).c_str());
+	GEngine->AddOnScreenDebugMessage(-1, .1f, FColor::Red, (("count: ") + std::to_string(count)).c_str());*/
 	if(count>=6)
 	{
 		IsHidden = true;
