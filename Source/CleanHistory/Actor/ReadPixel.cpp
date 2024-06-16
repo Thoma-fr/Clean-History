@@ -91,8 +91,6 @@ float AReadPixel::GetBloodQuantityFromRenderTarget(UTextureRenderTarget2D* uRend
 
 	/*for (FColor& color : SurfData)
 	{
-		
-
 		//maxInt++;
 
 		/*if (maxInt < 15)
@@ -119,7 +117,7 @@ float AReadPixel::GetBloodQuantityFromRenderTarget(UTextureRenderTarget2D* uRend
 
 	text = FString::Printf(TEXT("maxInt : %d"), numberOperation);
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, text);
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, text);
 	
 	//bloodQuantity = (static_cast<float>(bloodQuantity) / SurfData.Num()) / 255.f;
 
