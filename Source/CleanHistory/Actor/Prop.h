@@ -28,6 +28,7 @@ public:
 
 	virtual void DealDamagePerSecond() override;
 
+
 	virtual void Die();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -38,6 +39,9 @@ public:
 
 	UPROPERTY()
 	uint32 Damage;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	bool IsKey;
 
 	UPROPERTY()
 	FTimerHandle DamageTimer;

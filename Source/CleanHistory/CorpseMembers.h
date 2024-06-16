@@ -27,7 +27,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool DetacheAllChildOnDIe;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMeshComponent> ParentSkelethalMesh;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
@@ -47,6 +48,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsHidden = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool CountAsCorpse = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool MustEject = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool Debug = false;
@@ -61,7 +64,8 @@ public:
 
 	UPROPERTY()
 	bool hasDetached;
-
+	UFUNCTION(BlueprintCallable)
+	void Die() override;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	USoundBase* HitSound;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -77,5 +81,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void Eject();
 
-	
+private:
+	UPROPERTY()
+	TArray<TObjectPtr<USkeletalMeshComponent>> ChildsMesh;
+
+	UPROPERTY()
+	TArray<FVector> ChildsMeshLastPos;
+	UPROPERTY()
+	bool Burned;
+	UFUNCTION(BlueprintCallable)
+	void Detache();
+	UFUNCTION(BlueprintCallable)
+	void DetacheAll();
 };
