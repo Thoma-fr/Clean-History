@@ -3,7 +3,6 @@
 
 #include "CorpseMembers.h"
 
-#include "AsyncDetailViewDiff.h"
 #include "Actor/BloodManager.h"
 #include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
