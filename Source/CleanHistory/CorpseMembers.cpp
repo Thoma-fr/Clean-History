@@ -98,7 +98,10 @@ void ACorpseMembers::Tick(float DeltaTime)
 			myBloodManager = GetWorld()->SpawnActor<ABloodManager>(bloodManager);
 			myBloodManager->AttachToComponent(BleedPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 		}
-		ChildsMeshLastPos.Empty();
+		TArray<FName> bones;
+		MemberMesh->GetBoneNames(bones);
+		//MemberMesh->Get
+		//ChildsMeshLastPos.Empty();
 		ChildsMesh.Empty();
 	}
 	if(MustEject)
