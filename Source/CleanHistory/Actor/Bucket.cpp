@@ -143,6 +143,7 @@ void ABucket::OnBeginOverlapCleaning(UPrimitiveComponent* OverlappedComponent,
 void ABucket::Fill(int32 quantity)
 {
 	WaterLevel += quantity;
+	DirtySaturation -= CleaningValue;
 
 	if (WaterLevel > 100)
 		WaterLevel = MaxWaterLevel;
