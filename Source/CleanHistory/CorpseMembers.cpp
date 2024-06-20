@@ -196,8 +196,10 @@ void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 
 		MemberLife -= OtherComp->GetComponentVelocity().Length() * 0.20f;
 		UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation());
+
 		if(MemberLife>0)
 			return;
+
 		Detache();
 		
 	}
