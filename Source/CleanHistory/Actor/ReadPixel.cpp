@@ -18,35 +18,12 @@ void AReadPixel::BeginPlay()
 {
 	Super::BeginPlay();
 
-	/*TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), Linetrac::StaticClass(), FoundActors);*/
-
-	//TSubclassOf<AActor> ClassToFind; // Needs to be populated somehow (e.g. by exposing to blueprints as uproperty and setting it there
-
-	/*TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ClassToFind, FoundActors);
-
-	/*if (ParentSkelethalMesh == nullptr)
-	{
-		return;
-	}#1#
-
-	UE_LOG(LogTemp, Warning, TEXT("The parent value is:"));*/
-
-	/*if (FoundActors)
-	{
-		
-	}*/
-
-	//UGameplayStatics::GetActorOfClass(GetWorld(), ClassToFind);
-
-	//ProtoLineTr
+	
 }
 
 void AReadPixel::TestPrintPixel(UTextureRenderTarget2D* RenderTarget)
 {
-	/*char* result = TCHAR_TO_ANSI(*text);
-	UE_LOG(LogTemp, Warning, TEXT(text));*/// Include the necessary header files
+
 
 	FString text = "";
 
@@ -74,46 +51,6 @@ float AReadPixel::GetBloodQuantityFromRenderTarget(UTextureRenderTarget2D* uRend
 	{
 		bloodQuantity += color.R;
 	}
-
-	/*for (int i = 0; i < SurfData.Num(); i++)
-	{
-		const uint8& color = SurfData[i].R;
-
-		bloodQuantity += color;
-
-		/*if (color > 150)
-		{
-			bloodQuantity += color * 10;
-			numberOperation++;
-			i += 10;
-		}#1#
-	}*/
-
-	/*for (FColor& color : SurfData)
-	{
-		//maxInt++;
-
-		/*if (maxInt < 15)
-		{
-			text = FString::Printf(TEXT("R : %d, G : %d, B : %d, A : %d"), color.R, color.G, color.B, color.A);
-
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, text);
-
-			maxInt++;
-		}#1#
-
-		if (currentIndex >= 10)
-		{
-			// Do something with the color
-			bloodQuantity += color.R;
-			numberOperation++;
-			currentIndex = 0;
-		}
-		else
-		{
-			currentIndex++;
-		}
-	}*/
 
 	text = FString::Printf(TEXT("maxInt : %d"), numberOperation);
 

@@ -3,7 +3,7 @@
 
 #include "HideComponent.h"
 
-#include <mftransform.h>
+//#include <mftransform.h>
 
 // Sets default values for this component's properties
 UHideComponent::UHideComponent()
