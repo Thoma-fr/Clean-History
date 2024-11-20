@@ -16,8 +16,11 @@ AProp::AProp()
 // Called when the game starts or when spawned
 void AProp::BeginPlay()
 {
-	Super::BeginPlay();
-	
+	Super::BeginPlay(); 
+
+    FString NiagaraPath = "/Game / GA / fx / blood / burst";
+    BurstNiagara = Cast<UNiagaraSystem>(StaticLoadObject(UNiagaraSystem::StaticClass(), nullptr, *NiagaraPath));
+    
 }
 
 // Called every frame
@@ -25,6 +28,8 @@ void AProp::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+    
+    
 }
 
 void AProp::ApplyDamageOverTime(uint32 DamagePerSecond)
@@ -56,8 +61,11 @@ void AProp::Die()
     if (BurnOnDestroySound != nullptr)
         UGameplayStatics::PlaySoundAtLocation(this, BurnOnDestroySound, GetActorLocation());
 
+    // Ne meurs pas just invisible et disabled
     SetActorEnableCollision(false);
     SetActorHiddenInGame(true);
     SetActorTickEnabled(false);
+
+    OnDieDelegate.Broadcast();
 }
 
