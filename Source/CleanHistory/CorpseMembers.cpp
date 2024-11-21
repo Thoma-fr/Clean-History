@@ -1,8 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
+#pragma once
 
 #include "CorpseMembers.h"
 
+#include "Subsystem/ScoringSubSystem.h"
 #include "Actor/BloodManager.h"
 #include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -177,12 +178,14 @@ void ACorpseMembers::Die()
 	if (BurnOnDestroySound != nullptr)
 		UGameplayStatics::PlaySoundAtLocation(this, BurnOnDestroySound, GetActorLocation());
 
+	Burned = true;
+	IsHidden = true;
+	GetGameInstance()->GetSubsystem<UScoringSubSystem>()->Score(EScoringTypeEnum::BURN, MemberMesh->GetComponentToWorld().GetLocation());
+
 	Detache();
 	//SetActorEnableCollision(false);
 	SetActorHiddenInGame(true);
 	//SetActorTickEnabled(false);
-	Burned= true;
-	IsHidden=true;
 }
 
 void ACorpseMembers::OverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -226,6 +229,7 @@ void ACorpseMembers::Detache()
 {
 	if(!GetParentComponent())
 		return;
+
 	MemberMesh->SetLeaderPoseComponent(nullptr);
 	TArray<USceneComponent*> parents;
 	TArray<USceneComponent*> child;
@@ -278,6 +282,9 @@ void ACorpseMembers::Detache()
 	MemberMesh->SetSimulatePhysics(false);
 	hasDetached = true;
 	UGameplayStatics::PlaySoundAtLocation(this, DismenberSound, GetActorLocation());
+
+	if(!Burned)
+		GetGameInstance()->GetSubsystem<UScoringSubSystem>()->Score(EScoringTypeEnum::CUT, lastPos);
 
 
 	CutZone->OnComponentBeginOverlap.RemoveDynamic(this, &ACorpseMembers::OverlapBegin);

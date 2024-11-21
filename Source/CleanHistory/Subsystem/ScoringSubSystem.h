@@ -2,20 +2,11 @@
 
 #include "Subsystems/Subsystem.h"
 #include "Blueprint/UserWidget.h" 
+#include "../DataAssets/ScoringDataAssets.h"
 #include "ScoringSubSystem.generated.h"
 
-UENUM(BlueprintType)
-enum class EScoringTypeEnum : uint8
-{
-	DESTRUCTION,
-	CUT,
-	BLOOD,
-	BURN,
-	DEFAULT
-};
-
 UCLASS(Blueprintable)
-class UScoringSubSystem : public UGameInstanceSubsystem
+class CLEANHISTORY_API UScoringSubSystem : public UGameInstanceSubsystem, public FTickableGameObject
 {
 	GENERATED_BODY()
 public:
@@ -24,7 +15,7 @@ public:
 
 	virtual void Deinitialize() override;
 
-	virtual void Tick(float DeltaSeconds);
+	virtual void Tick(float DeltaSeconds) override;
 
 	void DisplayScoreFeedback(float Score, FVector WorldLocation);
 
@@ -37,23 +28,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	int GetScore(EScoringTypeEnum scoreType);
 
-	UFUNCTION(BlueprintCallable)
-	void SetComboDelay(float delay);
-
 private:
 	
 public:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TMap<EScoringTypeEnum, float> scoreTypeValues;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TMap<EScoringTypeEnum, float> scoreTypeMultiplier;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float comboDelay;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TSubclassOf<AActor> ScoreFeedbackWidgetClass;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	UScoringDataAssets* scoringDataAsset;
 
 private: 
 	UPROPERTY()
@@ -76,4 +55,7 @@ private:
 	
 	UPROPERTY()
 	float comboTime = 0;
+
+	// Hérité via FTickableGameObject
+	TStatId GetStatId() const override;
 };

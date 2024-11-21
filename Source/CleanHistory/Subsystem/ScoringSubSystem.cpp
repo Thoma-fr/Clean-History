@@ -1,3 +1,5 @@
+#pragma once
+
 #include "ScoringSubSystem.h"
 #include "Components/WidgetComponent.h"
 #include "Components/TextBlock.h" 
@@ -17,8 +19,11 @@ void UScoringSubSystem::Deinitialize()
 
 void UScoringSubSystem::Tick(float DeltaSeconds)
 {
+	if (scoringDataAsset == nullptr)
+		return;
+
 	comboTime += DeltaSeconds;
-	if (comboTime >= comboDelay)
+	if (comboTime >= scoringDataAsset->comboDelay)
 	{
 		comboTime = 0;
 		multiplier = 1;
@@ -27,28 +32,22 @@ void UScoringSubSystem::Tick(float DeltaSeconds)
 
 void UScoringSubSystem::Score(EScoringTypeEnum scoreType, FVector WorldLocation)
 {
-	if (lastType != scoreType)
-	{
-		comboTime = 0;
-		multiplier += scoreTypeMultiplier[scoreType];
-	}
-
 	switch (scoreType)
 	{
 	case EScoringTypeEnum::DESTRUCTION:
-		scoreDestruction += scoreTypeValues[scoreType] * multiplier;
+		scoreDestruction += scoringDataAsset->scoreTypeValues[scoreType] * multiplier;
 		break;
 
 	case EScoringTypeEnum::CUT:
-		scoreCut += scoreTypeValues[scoreType] * multiplier;
+		scoreCut += scoringDataAsset->scoreTypeValues[scoreType] * multiplier;
 		break;
 
 	case EScoringTypeEnum::BLOOD:
-		scoreBlood += scoreTypeValues[scoreType] * multiplier;
+		scoreBlood += scoringDataAsset->scoreTypeValues[scoreType] * multiplier;
 		break;
 
 	case EScoringTypeEnum::BURN:
-		scoreBurn += scoreTypeValues[scoreType] * multiplier;
+		scoreBurn += scoringDataAsset->scoreTypeValues[scoreType] * multiplier;
 		break;
 
 	case EScoringTypeEnum::DEFAULT:
@@ -58,14 +57,29 @@ void UScoringSubSystem::Score(EScoringTypeEnum scoreType, FVector WorldLocation)
 		return;
 	}
 
-	DisplayScoreFeedback(scoreTypeValues[scoreType], WorldLocation);
+	DisplayScoreFeedback(scoringDataAsset->scoreTypeValues[scoreType]*multiplier, WorldLocation);
+
+	if (lastType != scoreType)
+	{
+		comboTime = 0;
+		if (multiplier <= 1)
+		{
+			multiplier = scoringDataAsset->scoreTypeMultiplier[scoreType];
+		}
+		else
+		{
+			multiplier += scoringDataAsset->scoreTypeMultiplier[scoreType];
+		}
+	}
 }
 
 void UScoringSubSystem::DisplayScoreFeedback(float Score, FVector WorldLocation)
 { 
-	if (ScoreFeedbackWidgetClass) 
+	if (scoringDataAsset->ScoreFeedbackWidgetClass)
 	{ 
-		AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ScoreFeedbackWidgetClass, WorldLocation, FRotator::ZeroRotator);
+		AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(scoringDataAsset->ScoreFeedbackWidgetClass, WorldLocation, FRotator::ZeroRotator);
+		SpawnedActor->SetLifeSpan(scoringDataAsset->ScoreFeedbackTime);
+
 		if (SpawnedActor)
 		{ 
 			UWidgetComponent* WidgetComp = SpawnedActor->FindComponentByClass<UWidgetComponent>();
@@ -86,19 +100,10 @@ void UScoringSubSystem::DisplayScoreFeedback(float Score, FVector WorldLocation)
 						UTextBlock* MultiplierText = (UTextBlock*)ScoreFeedbackWidget->GetWidgetFromName(TEXT("MultiplierText"));
 						if (MultiplierText)
 						{
-							MultiplierText->SetText(FText::AsNumber(multiplier));
+							MultiplierText->SetText(FText::FromString(FString::Printf(TEXT("x%.1f"), multiplier)));
 						}
 					}
 				}
-
-				/*FTimerHandle WidgetTimerHandle;
-				GetWorld()->GetTimerManager().SetTimer(WidgetTimerHandle, FTimerDelegate::CreateLambda([ScoreFeedbackWidget]()
-					{
-						if (ScoreFeedbackWidget)
-						{
-							ScoreFeedbackWidget->RemoveFromParent();
-						}
-					}), 2.0f, false);*/
 			}
 		} 
 	} 
@@ -139,7 +144,7 @@ int UScoringSubSystem::GetScore(EScoringTypeEnum scoreType)
 	}
 }
 
-void UScoringSubSystem::SetComboDelay(float delay)
+TStatId UScoringSubSystem::GetStatId() const
 {
-	comboDelay = delay;
+	return TStatId();
 }
