@@ -3,8 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "NiagaraFunctionLibrary.h"
-#include "NiagaraComponent.h"
 #include "GameFramework/Actor.h"
 #include "../Interfaces/IBurnable.h"
 #include "Prop.generated.h"
@@ -52,12 +50,4 @@ public:
 
 	UPROPERTY()
 	FTimerHandle DamageTimer;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UNiagaraSystem* BurstNiagara;
-
-	UPROPERTY()
-	class UNiagaraComponent* NiagaraComp;
-
-
 };

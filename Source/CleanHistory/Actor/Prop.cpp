@@ -17,9 +17,6 @@ AProp::AProp()
 void AProp::BeginPlay()
 {
 	Super::BeginPlay(); 
-
-    FString NiagaraPath = "/Game / GA / fx / blood / burst";
-    BurstNiagara = Cast<UNiagaraSystem>(StaticLoadObject(UNiagaraSystem::StaticClass(), nullptr, *NiagaraPath));
     
 }
 
