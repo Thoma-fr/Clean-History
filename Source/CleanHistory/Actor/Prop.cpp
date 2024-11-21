@@ -3,6 +3,7 @@
 
 #include "Prop.h"
 
+#include "../Subsystem/ScoringSubSystem.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -55,6 +56,10 @@ void AProp::DealDamagePerSecond()
 
 void AProp::Die() 
 {
+    FVector position = GetComponentByClass<UStaticMeshComponent>()->GetComponentToWorld().GetLocation();
+    GetGameInstance()->GetSubsystem<UScoringSubSystem>()->Score(EScoringTypeEnum::BURN, position);
+    
+
     if (BurnOnDestroySound != nullptr)
         UGameplayStatics::PlaySoundAtLocation(this, BurnOnDestroySound, GetActorLocation());
 
