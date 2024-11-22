@@ -3,6 +3,7 @@
 
 #include "Prop.h"
 
+#include "../Subsystem/ScoringSubSystem.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -16,8 +17,8 @@ AProp::AProp()
 // Called when the game starts or when spawned
 void AProp::BeginPlay()
 {
-	Super::BeginPlay();
-	
+	Super::BeginPlay(); 
+    
 }
 
 // Called every frame
@@ -25,6 +26,8 @@ void AProp::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+    
+    
 }
 
 void AProp::ApplyDamageOverTime(uint32 DamagePerSecond)
@@ -53,11 +56,18 @@ void AProp::DealDamagePerSecond()
 
 void AProp::Die() 
 {
+    FVector position = GetComponentByClass<UStaticMeshComponent>()->GetComponentToWorld().GetLocation();
+    GetGameInstance()->GetSubsystem<UScoringSubSystem>()->Score(EScoringTypeEnum::BURN, position);
+    
+
     if (BurnOnDestroySound != nullptr)
         UGameplayStatics::PlaySoundAtLocation(this, BurnOnDestroySound, GetActorLocation());
 
+    // Ne meurs pas just invisible et disabled
     SetActorEnableCollision(false);
     SetActorHiddenInGame(true);
     SetActorTickEnabled(false);
+
+    OnDieDelegate.Broadcast();
 }
 

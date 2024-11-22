@@ -7,6 +7,8 @@
 #include "../Interfaces/IBurnable.h"
 #include "Prop.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPropSignature);
+
 UCLASS()
 class CLEANHISTORY_API AProp : public AActor, public IIBurnable
 {
@@ -15,6 +17,9 @@ class CLEANHISTORY_API AProp : public AActor, public IIBurnable
 public:	
 	// Sets default values for this actor's properties
 	AProp();
+
+	UPROPERTY(BlueprintAssignable, meta = (IsBindableEvent = true))
+	FPropSignature OnDieDelegate;
 
 protected:
 	// Called when the game starts or when spawned
