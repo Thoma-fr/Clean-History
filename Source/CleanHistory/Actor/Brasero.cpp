@@ -65,6 +65,8 @@ void ABrasero::Burn()
 	if (!CanBurn)
 		return;
 
+	OnBurnDelegate.Broadcast();
+
 	IIBurnable* BurnableActor = Cast<IIBurnable>(ActorInZone);
 	if (BurnableActor)
 	{
