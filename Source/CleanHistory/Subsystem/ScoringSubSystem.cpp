@@ -61,6 +61,7 @@ void UScoringSubSystem::Score(EScoringTypeEnum scoreType, FVector WorldLocation)
 
 	if (lastType != scoreType)
 	{
+		lastType = scoreType;
 		comboTime = 0;
 		if (multiplier <= 1)
 		{

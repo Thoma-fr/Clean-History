@@ -5,7 +5,7 @@
 #include "../DataAssets/ScoringDataAssets.h"
 #include "ScoringSubSystem.generated.h"
 
-UCLASS(Blueprintable)
+UCLASS()
 class CLEANHISTORY_API UScoringSubSystem : public UGameInstanceSubsystem, public FTickableGameObject
 {
 	GENERATED_BODY()
