@@ -30,7 +30,6 @@ ABrasero::ABrasero()
 void ABrasero::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -89,5 +88,7 @@ void ABrasero::Burn()
 		CanBurn = false;
 		if(!EjectAtEnd)
 			CollisionBoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		IsBurning = false;
 	}
 }

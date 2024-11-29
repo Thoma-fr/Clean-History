@@ -59,6 +59,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<class UStaticMeshComponent> StaticMeshComponent;
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	bool IsBurning = false;
+
 private:
 	UPROPERTY(EditAnywhere)
 	bool CanBurn =  true;
