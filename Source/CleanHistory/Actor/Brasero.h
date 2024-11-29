@@ -56,6 +56,9 @@ public:
 		bool bFromSweep,
 		const FHitResult& SweepResult);
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh")
+	TObjectPtr<class UStaticMeshComponent> StaticMeshComponent;
+
 private:
 	UPROPERTY(EditAnywhere)
 	bool CanBurn =  true;
@@ -64,9 +67,6 @@ private:
 	bool EjectAtEnd = false;
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
 	TObjectPtr<class UBoxComponent> CollisionBoxComponent;
-	
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-	TObjectPtr<class UStaticMeshComponent> StaticMeshComponent;
 
 	UPROPERTY()
 	AActor* ActorInZone = nullptr;
