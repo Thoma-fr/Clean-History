@@ -54,8 +54,11 @@ void ABrasero::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	}
 	if (OtherActor->GetClass()->ImplementsInterface(UIBurnable::StaticClass()))
 	{
-		ActorInZone = OtherActor;
-		ABrasero::Burn();
+		if (Cast<AProp>(OtherActor)->CanBurn)
+		{
+			ActorInZone = OtherActor;
+			ABrasero::Burn();
+		}
 	}
 }
 
