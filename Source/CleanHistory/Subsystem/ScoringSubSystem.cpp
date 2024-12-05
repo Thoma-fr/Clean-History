@@ -78,6 +78,7 @@ void UScoringSubSystem::ScoreWithValueAndText(EScoringTypeEnum scoreType, FVecto
 {
 	ScoreValue = ScoreValue >= 0 ? ScoreValue : scoringDataAsset->scoreTypeValues[scoreType];
 	ScoreMultiplier = ScoreMultiplier >= 0 ? ScoreMultiplier : scoringDataAsset->scoreTypeMultiplier[scoreType];
+	float finalScoreAdde = isEvent ? ScoreValue : ScoreValue * multiplier;
 
 	switch (scoreType)
 	{
@@ -85,16 +86,30 @@ void UScoringSubSystem::ScoreWithValueAndText(EScoringTypeEnum scoreType, FVecto
 		comboCpt++;
 		LastComboLoc = WorldLocation;
 		specialFeedbackTime = 0;
-		scoreDestruction += ScoreValue * multiplier;
-		DisplayScoreFeedback(ScoreValue * multiplier, WorldLocation);
+		scoreDestruction += finalScoreAdde;
+		if (isEvent)
+		{
+			DisplayScoreFeedbackWithoutMultiplier(finalScoreAdde, WorldLocation);
+		}
+		else
+		{
+			DisplayScoreFeedback(finalScoreAdde, WorldLocation);
+		}
 		break;
 
 	case EScoringTypeEnum::CUT:
 		comboCpt++;
 		LastComboLoc = WorldLocation;
 		specialFeedbackTime = 0;
-		scoreCut += ScoreValue * multiplier;
-		DisplayScoreFeedback(ScoreValue * multiplier, WorldLocation);
+		scoreCut += finalScoreAdde;
+		if (isEvent)
+		{
+			DisplayScoreFeedbackWithoutMultiplier(finalScoreAdde, WorldLocation);
+		}
+		else
+		{
+			DisplayScoreFeedback(finalScoreAdde, WorldLocation);
+		}
 		break;
 
 	case EScoringTypeEnum::BLOOD:
@@ -107,7 +122,14 @@ void UScoringSubSystem::ScoreWithValueAndText(EScoringTypeEnum scoreType, FVecto
 		LastComboLoc = WorldLocation;
 		specialFeedbackTime = 0;
 		scoreBurn += ScoreValue * multiplier;
-		DisplayScoreFeedback(ScoreValue * multiplier, WorldLocation);
+		if (isEvent)
+		{
+			DisplayScoreFeedbackWithoutMultiplier(finalScoreAdde, WorldLocation);
+		}
+		else
+		{
+			DisplayScoreFeedback(finalScoreAdde, WorldLocation);
+		}
 		break;
 
 	case EScoringTypeEnum::DEFAULT:
@@ -124,15 +146,7 @@ void UScoringSubSystem::ScoreWithValueAndText(EScoringTypeEnum scoreType, FVecto
 	{
 		lastType = scoreType;
 		comboTime = 0;
-
-		if (multiplier <= 1)
-		{
-			multiplier = ScoreMultiplier;
-		}
-		else
-		{
-			multiplier += ScoreMultiplier;
-		}
+		multiplier += ScoreMultiplier;
 	}
 }
 
