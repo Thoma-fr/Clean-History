@@ -30,9 +30,6 @@ public :
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<AActor> ScoreFeedbackWidgetClass;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TSubclassOf<AActor> ScoreSpecialFeedbackWidgetClass;
-
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	float comboDelay;
 

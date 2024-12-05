@@ -17,6 +17,13 @@ void UScoringSubSystem::Deinitialize()
 	Super::Deinitialize();
 }
 
+
+void UScoringSubSystem::SetupAfterInit() 
+{
+	scoringFeedbackAsset->feedBackFromTreshhold.GetKeys(keys);
+	keys.Sort();
+}
+
 void UScoringSubSystem::Tick(float DeltaSeconds)
 {
 	if (scoringDataAsset == nullptr)
@@ -32,9 +39,23 @@ void UScoringSubSystem::Tick(float DeltaSeconds)
 		lastType = EScoringTypeEnum::DEFAULT;
 	}
 
-	if (specialFeedbackTime >= scoringFeedbackAsset->specialFeedBackDelay)
+	if (specialFeedbackTime >= scoringFeedbackAsset->specialFeedBackDelay && comboCpt > keys[0])
 	{
+		specialFeedbackTime = 0;
 		
+		float lastKey = -1;
+		for (float key : keys)
+		{
+			if (comboCpt > key)
+				lastKey = key;
+		}
+
+		if (lastKey > 0)
+		{
+			DisplaySpecialFeedback(*scoringFeedbackAsset->feedBackFromTreshhold.Find(lastKey), LastComboLoc);
+		}
+		
+		comboCpt = 0;
 	}
 }
 
@@ -58,24 +79,35 @@ void UScoringSubSystem::ScoreWithValueAndText(EScoringTypeEnum scoreType, FVecto
 	ScoreValue = ScoreValue >= 0 ? ScoreValue : scoringDataAsset->scoreTypeValues[scoreType];
 	ScoreMultiplier = ScoreMultiplier >= 0 ? ScoreMultiplier : scoringDataAsset->scoreTypeMultiplier[scoreType];
 
-	int scoreTemp = ScoreValue * multiplier;
-
 	switch (scoreType)
 	{
 	case EScoringTypeEnum::DESTRUCTION:
-		scoreDestruction += scoreTemp;
+		comboCpt++;
+		LastComboLoc = WorldLocation;
+		specialFeedbackTime = 0;
+		scoreDestruction += ScoreValue * multiplier;
+		DisplayScoreFeedback(ScoreValue * multiplier, WorldLocation);
 		break;
 
 	case EScoringTypeEnum::CUT:
-		scoreCut += scoreTemp;
+		comboCpt++;
+		LastComboLoc = WorldLocation;
+		specialFeedbackTime = 0;
+		scoreCut += ScoreValue * multiplier;
+		DisplayScoreFeedback(ScoreValue * multiplier, WorldLocation);
 		break;
 
 	case EScoringTypeEnum::BLOOD:
-		scoreBlood += scoreTemp;
+		scoreBlood += ScoreValue;
+		DisplayScoreFeedbackWithoutMultiplier(ScoreValue, WorldLocation);
 		break;
 
 	case EScoringTypeEnum::BURN:
-		scoreBurn += scoreTemp;
+		comboCpt++;
+		LastComboLoc = WorldLocation;
+		specialFeedbackTime = 0;
+		scoreBurn += ScoreValue * multiplier;
+		DisplayScoreFeedback(ScoreValue * multiplier, WorldLocation);
 		break;
 
 	case EScoringTypeEnum::DEFAULT:
@@ -85,8 +117,6 @@ void UScoringSubSystem::ScoreWithValueAndText(EScoringTypeEnum scoreType, FVecto
 		return;
 	}
 
-	DisplayScoreFeedback(scoreTemp, WorldLocation);
-
 	if (isEvent)
 		DisplaySpecialFeedback(specialText, WorldLocation);
 
@@ -94,6 +124,7 @@ void UScoringSubSystem::ScoreWithValueAndText(EScoringTypeEnum scoreType, FVecto
 	{
 		lastType = scoreType;
 		comboTime = 0;
+
 		if (multiplier <= 1)
 		{
 			multiplier = ScoreMultiplier;
@@ -146,11 +177,45 @@ void UScoringSubSystem::DisplayScoreFeedback(float Score, FVector WorldLocation)
 	} 
 }
 
-void UScoringSubSystem::DisplaySpecialFeedback(FString specialText, FVector WorldLocation)
+void UScoringSubSystem::DisplayScoreFeedbackWithoutMultiplier(float Score, FVector WorldLocation)
 {
 	if (scoringDataAsset->ScoreFeedbackWidgetClass)
 	{
-		AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(scoringDataAsset->ScoreSpecialFeedbackWidgetClass, WorldLocation, FRotator::ZeroRotator);
+		AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(scoringDataAsset->ScoreFeedbackWidgetClass, WorldLocation, FRotator::ZeroRotator);
+		SpawnedActor->SetLifeSpan(scoringDataAsset->ScoreFeedbackTime);
+
+		if (SpawnedActor)
+		{
+			UWidgetComponent* WidgetComp = SpawnedActor->FindComponentByClass<UWidgetComponent>();
+
+			if (WidgetComp)
+			{
+				UUserWidget* ScoreFeedbackWidget = WidgetComp->GetUserWidgetObject();
+				if (ScoreFeedbackWidget)
+				{
+					UTextBlock* ScoreText = (UTextBlock*)ScoreFeedbackWidget->GetWidgetFromName(TEXT("ScoreText"));
+					if (ScoreText)
+					{
+						ScoreText->SetText(FText::AsNumber(Score));
+					}
+
+					UTextBlock* MultiplierText = (UTextBlock*)ScoreFeedbackWidget->GetWidgetFromName(TEXT("MultiplierText"));
+
+					if (MultiplierText)
+					{
+						MultiplierText->SetText(FText::FromString(FString("")));
+					}
+				}
+			}
+		}
+	}
+}
+
+void UScoringSubSystem::DisplaySpecialFeedback(FString specialText, FVector WorldLocation)
+{
+	if (scoringFeedbackAsset->ScoreSpecialFeedbackWidgetClass)
+	{
+		AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(scoringFeedbackAsset->ScoreSpecialFeedbackWidgetClass, WorldLocation, FRotator::ZeroRotator);
 		SpawnedActor->SetLifeSpan(scoringDataAsset->ScoreFeedbackTime);
 
 		if (SpawnedActor)

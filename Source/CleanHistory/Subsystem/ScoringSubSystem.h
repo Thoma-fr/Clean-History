@@ -21,7 +21,12 @@ public:
 
 	void DisplayScoreFeedback(float Score, FVector WorldLocation);
 
+	void DisplayScoreFeedbackWithoutMultiplier(float Score, FVector WorldLocation);
+
 	void DisplaySpecialFeedback(FString specialText, FVector WorldLocation);
+
+	UFUNCTION(BlueprintCallable)
+	void SetupAfterInit();
 
 	UFUNCTION(BlueprintCallable)
 	void Score(EScoringTypeEnum scoreType, FVector WorldLocation);
@@ -74,6 +79,15 @@ private:
 
 	UPROPERTY()
 	float specialFeedbackTime = 0;
+
+	UPROPERTY()
+	TArray<int> keys;
+
+	UPROPERTY()
+	FVector LastComboLoc;
+
+	UPROPERTY()
+	int comboCpt = 0;
 
 	// Hérité via FTickableGameObject
 	TStatId GetStatId() const override;
