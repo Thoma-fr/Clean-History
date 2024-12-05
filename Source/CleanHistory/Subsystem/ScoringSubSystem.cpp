@@ -23,31 +23,59 @@ void UScoringSubSystem::Tick(float DeltaSeconds)
 		return;
 
 	comboTime += DeltaSeconds;
+	specialFeedbackTime += DeltaSeconds;
+
 	if (comboTime >= scoringDataAsset->comboDelay)
 	{
 		comboTime = 0;
 		multiplier = 1;
+		lastType = EScoringTypeEnum::DEFAULT;
+	}
+
+	if (specialFeedbackTime >= scoringFeedbackAsset->specialFeedBackDelay)
+	{
+		
 	}
 }
 
 void UScoringSubSystem::Score(EScoringTypeEnum scoreType, FVector WorldLocation)
 {
+	ScoreWithValue(scoreType, WorldLocation, scoringDataAsset->scoreTypeValues[scoreType], scoringDataAsset->scoreTypeMultiplier[scoreType], false);
+}
+
+void UScoringSubSystem::ScoreFromProp(EScoringTypeEnum scoreType, FVector WorldLocation, AProp* prop)
+{
+	ScoreWithValueAndText(scoreType, WorldLocation, prop->scoreEventValue, prop->scoreEventMultiplier, prop->IsEvent, prop->scoreSpecialText);
+}
+
+void UScoringSubSystem::ScoreWithValue(EScoringTypeEnum scoreType, FVector WorldLocation, float ScoreValue, float ScoreMultiplier, bool isEvent)
+{
+	ScoreWithValueAndText(scoreType, WorldLocation, ScoreValue, ScoreMultiplier, isEvent, "");
+}
+
+void UScoringSubSystem::ScoreWithValueAndText(EScoringTypeEnum scoreType, FVector WorldLocation, float ScoreValue, float ScoreMultiplier, bool isEvent, FString specialText)
+{
+	ScoreValue = ScoreValue >= 0 ? ScoreValue : scoringDataAsset->scoreTypeValues[scoreType];
+	ScoreMultiplier = ScoreMultiplier >= 0 ? ScoreMultiplier : scoringDataAsset->scoreTypeMultiplier[scoreType];
+
+	int scoreTemp = ScoreValue * multiplier;
+
 	switch (scoreType)
 	{
 	case EScoringTypeEnum::DESTRUCTION:
-		scoreDestruction += scoringDataAsset->scoreTypeValues[scoreType] * multiplier;
+		scoreDestruction += scoreTemp;
 		break;
 
 	case EScoringTypeEnum::CUT:
-		scoreCut += scoringDataAsset->scoreTypeValues[scoreType] * multiplier;
+		scoreCut += scoreTemp;
 		break;
 
 	case EScoringTypeEnum::BLOOD:
-		scoreBlood += scoringDataAsset->scoreTypeValues[scoreType] * multiplier;
+		scoreBlood += scoreTemp;
 		break;
 
 	case EScoringTypeEnum::BURN:
-		scoreBurn += scoringDataAsset->scoreTypeValues[scoreType] * multiplier;
+		scoreBurn += scoreTemp;
 		break;
 
 	case EScoringTypeEnum::DEFAULT:
@@ -57,19 +85,22 @@ void UScoringSubSystem::Score(EScoringTypeEnum scoreType, FVector WorldLocation)
 		return;
 	}
 
-	DisplayScoreFeedback(scoringDataAsset->scoreTypeValues[scoreType]*multiplier, WorldLocation);
+	DisplayScoreFeedback(scoreTemp, WorldLocation);
 
-	if (lastType != scoreType)
+	if (isEvent)
+		DisplaySpecialFeedback(specialText, WorldLocation);
+
+	if (lastType != scoreType || isEvent)
 	{
 		lastType = scoreType;
 		comboTime = 0;
 		if (multiplier <= 1)
 		{
-			multiplier = scoringDataAsset->scoreTypeMultiplier[scoreType];
+			multiplier = ScoreMultiplier;
 		}
 		else
 		{
-			multiplier += scoringDataAsset->scoreTypeMultiplier[scoreType];
+			multiplier += ScoreMultiplier;
 		}
 	}
 }
@@ -96,18 +127,50 @@ void UScoringSubSystem::DisplayScoreFeedback(float Score, FVector WorldLocation)
 						ScoreText->SetText(FText::AsNumber(Score));
 					}
 
-					if (multiplier > 1)
+					UTextBlock* MultiplierText = (UTextBlock*)ScoreFeedbackWidget->GetWidgetFromName(TEXT("MultiplierText"));
+					
+					if (MultiplierText)
 					{
-						UTextBlock* MultiplierText = (UTextBlock*)ScoreFeedbackWidget->GetWidgetFromName(TEXT("MultiplierText"));
-						if (MultiplierText)
+						if (multiplier > 1)
 						{
-							MultiplierText->SetText(FText::FromString(FString::Printf(TEXT("x%.1f"), multiplier)));
+							MultiplierText->SetText(FText::FromString(FString("x") + FString::SanitizeFloat(multiplier)));
+						}
+						else
+						{
+							MultiplierText->SetText(FText::FromString(FString("")));
 						}
 					}
 				}
 			}
 		} 
 	} 
+}
+
+void UScoringSubSystem::DisplaySpecialFeedback(FString specialText, FVector WorldLocation)
+{
+	if (scoringDataAsset->ScoreFeedbackWidgetClass)
+	{
+		AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(scoringDataAsset->ScoreSpecialFeedbackWidgetClass, WorldLocation, FRotator::ZeroRotator);
+		SpawnedActor->SetLifeSpan(scoringDataAsset->ScoreFeedbackTime);
+
+		if (SpawnedActor)
+		{
+			UWidgetComponent* WidgetComp = SpawnedActor->FindComponentByClass<UWidgetComponent>();
+
+			if (WidgetComp)
+			{
+				UUserWidget* ScoreFeedbackWidget = WidgetComp->GetUserWidgetObject();
+				if (ScoreFeedbackWidget)
+				{
+					UTextBlock* ScoreText = (UTextBlock*)ScoreFeedbackWidget->GetWidgetFromName(TEXT("ScoreEventFeedback"));
+					if (ScoreText)
+					{
+						ScoreText->SetText(FText::FromString(specialText));
+					}
+				}
+			}
+		}
+	}
 }
 
 int UScoringSubSystem::GetFinalScore()
