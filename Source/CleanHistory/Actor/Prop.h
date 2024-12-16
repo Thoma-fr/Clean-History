@@ -50,4 +50,19 @@ public:
 
 	UPROPERTY()
 	FTimerHandle DamageTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool IsEvent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool CanBurn;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float scoreEventValue = -1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float scoreEventMultiplier = -1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString scoreSpecialText = "";
 };
