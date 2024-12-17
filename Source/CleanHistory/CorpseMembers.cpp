@@ -31,7 +31,7 @@ void ACorpseMembers::BeginPlay()
 	MemberMesh->GetSocketLocation(SocketName);
 	CutZone->AttachToComponent(MemberMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	CutZone->SetHiddenInGame(!Debug);
-
+	lastPos = MemberMesh->GetComponentToWorld().GetLocation();
 	
 	if (!GetParentComponent())
 	{
