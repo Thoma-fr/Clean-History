@@ -2,6 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 #include "ScoringDataAssets.generated.h"
 
 UENUM(BlueprintType)
@@ -35,5 +37,8 @@ public :
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	float ScoreFeedbackTime;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	UNiagaraSystem* BonusparticuleFeedback;
 };
 

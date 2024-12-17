@@ -141,7 +141,10 @@ void UScoringSubSystem::ScoreWithValueAndText(EScoringTypeEnum scoreType, FVecto
 	}
 
 	if (isEvent)
+	{
 		DisplaySpecialFeedback(specialText, WorldLocation);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), scoringDataAsset->BonusparticuleFeedback, WorldLocation);
+	}
 
 	if (lastType != scoreType || isEvent)
 	{
