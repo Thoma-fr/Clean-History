@@ -30,7 +30,6 @@ ABrasero::ABrasero()
 void ABrasero::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -55,8 +54,11 @@ void ABrasero::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	}
 	if (OtherActor->GetClass()->ImplementsInterface(UIBurnable::StaticClass()))
 	{
-		ActorInZone = OtherActor;
-		ABrasero::Burn();
+		if (Cast<AProp>(OtherActor)->CanBurn)
+		{
+			ActorInZone = OtherActor;
+			ABrasero::Burn();
+		}
 	}
 }
 
@@ -89,5 +91,7 @@ void ABrasero::Burn()
 		CanBurn = false;
 		if(!EjectAtEnd)
 			CollisionBoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		IsBurning = false;
 	}
 }

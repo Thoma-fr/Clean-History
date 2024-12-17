@@ -25,9 +25,6 @@ void AProp::BeginPlay()
 void AProp::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-    
-    
 }
 
 void AProp::ApplyDamageOverTime(uint32 DamagePerSecond)
@@ -57,7 +54,14 @@ void AProp::DealDamagePerSecond()
 void AProp::Die() 
 {
     FVector position = GetComponentByClass<UStaticMeshComponent>()->GetComponentToWorld().GetLocation();
-    GetGameInstance()->GetSubsystem<UScoringSubSystem>()->Score(EScoringTypeEnum::BURN, position);
+    if (IsEvent)
+    {
+        GetGameInstance()->GetSubsystem<UScoringSubSystem>()->ScoreWithValue(EScoringTypeEnum::BURN, position, scoreEventValue, scoreEventMultiplier, IsEvent);
+    }
+    else 
+    {
+        GetGameInstance()->GetSubsystem<UScoringSubSystem>()->Score(EScoringTypeEnum::BURN, position);
+    }
     
 
     if (BurnOnDestroySound != nullptr)
