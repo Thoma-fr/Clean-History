@@ -258,7 +258,7 @@ void UScoringSubSystem::DisplaySpecialFeedback(FString specialText, FVector Worl
 
 int UScoringSubSystem::GetFinalScore()
 {
-	return scoreDestruction + scoreBlood + scoreCut + scoreBurn;
+	return (scoreDestruction + scoreBlood + scoreCut + scoreBurn);
 }
 
 int UScoringSubSystem::GetScore(EScoringTypeEnum scoreType)
