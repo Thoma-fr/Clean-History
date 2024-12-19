@@ -53,6 +53,7 @@ void UScoringSubSystem::Tick(float DeltaSeconds)
 		if (lastKey > 0)
 		{
 			DisplaySpecialFeedback(*scoringFeedbackAsset->feedBackFromTreshhold.Find(lastKey), LastComboLoc);
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), *scoringFeedbackAsset->particuleFromTreshhold.Find(lastKey), LastComboLoc);
 		}
 		
 		comboCpt = 0;
@@ -140,7 +141,10 @@ void UScoringSubSystem::ScoreWithValueAndText(EScoringTypeEnum scoreType, FVecto
 	}
 
 	if (isEvent)
+	{
 		DisplaySpecialFeedback(specialText, WorldLocation);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), scoringDataAsset->BonusparticuleFeedback, WorldLocation);
+	}
 
 	if (lastType != scoreType || isEvent)
 	{
@@ -254,7 +258,7 @@ void UScoringSubSystem::DisplaySpecialFeedback(FString specialText, FVector Worl
 
 int UScoringSubSystem::GetFinalScore()
 {
-	return scoreDestruction + scoreBlood + scoreCut + scoreBurn;
+	return (scoreDestruction + scoreBlood + scoreCut + scoreBurn);
 }
 
 int UScoringSubSystem::GetScore(EScoringTypeEnum scoreType)
